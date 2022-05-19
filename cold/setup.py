@@ -1,6 +1,8 @@
 # Format taken from:
 # https://www.freecodecamp.org/news/build-your-first-python-package/
 # We will change this as the project evolves
+# See also:
+# https://python-packaging-tutorial.readthedocs.io/en/latest/setup_py.html
 
 from setuptools import setup, find_packages
 
