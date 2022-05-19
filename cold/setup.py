@@ -3,6 +3,7 @@
 # We will change this as the project evolves
 # See also:
 # https://python-packaging-tutorial.readthedocs.io/en/latest/setup_py.html
+# https://python-packaging.readthedocs.io/en/latest/
 
 from setuptools import setup, find_packages
 
