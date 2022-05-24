@@ -1,3 +1,7 @@
+import requests
+import os
+import csv
+import pickle
 
 class Dataset(object) : 
 
@@ -12,8 +16,9 @@ class Dataset(object) :
             dataset_save_dir (str, optional): _description_. Defaults to '~/cold/'.
         """
         
-        self.COLD_URL = 'https://raw.githubusercontent.com/alexispalmer/cold/master/data/'
         self.dataset_save_dir = dataset_save_dir
+        self.URL = None
+        self.BASEURL = None
         self.dataset_name = None
         self.shape = None
         self.description = None
@@ -28,8 +33,31 @@ class Dataset(object) :
     def __str__(self) -> str:
         pass
 
+    
+    def _dataset_file_exists(self) -> bool : 
 
-    def _download(self, dataset_name:str) -> bool : 
+        if self.BASEURL in os.listdir(self.dataset_save_dir) : 
+            return True
+
+        return False
+
+
+    def _save_dir_exists(self) -> bool : 
+
+        dataset_basedir = os.path.basename(self.dataset_save_dir)
+
+        if not os.path.isdir(dataset_basedir) :
+            raise ValueError('Unable to find the base directory {} for dataset directory {}'.format(dataset_basedir, 
+                                                                                                self.dataset_save_dir))
+
+        if not os.path.isdir(self.dataset_save_dir) : 
+            os.mkdir(self.dataset_save_dir)
+            return False
+
+        return True
+
+
+    def _download(self) -> bool : 
         """Base class that downloads the dataset from an online path. 
 
         Args:
@@ -38,7 +66,13 @@ class Dataset(object) :
         Returns:
             bool: _description_
         """
-        pass
+        r = requests.get(self.URL)
+        lines = r.content.split('\n')
+        data = csv.reader(lines, delimiter='\t')
+
+        with open(os.path.join(self.dataset_save_dir , self.BASEURL) , 'wb') as f : 
+            f.write(data)
+
 
     def data(self) : 
         pass
