@@ -17,8 +17,10 @@ class Metrics:
         self.confusion_matrix = confusion_matrix(y_true, y_pred)
         self.__classification_report = classification_report(y_true, y_pred,
                                                              digits = self.digits)
+
     def __assert_equal_length(self, y_true, y_pred) -> None:
         assert (len(y_true) == len(y_pred)), "The length of the true labels is not the same as the pred labels."
+
     def classification_report(self) -> str:
         """_summary_
 
@@ -26,6 +28,7 @@ class Metrics:
             str: Returns a pretty printed classification report.
         """
         print(self.__classification_report)
+
     def norm_confusion_matrix(self, along = 'row') -> np.ndarray:
         """_summary_
 
@@ -44,8 +47,9 @@ class Metrics:
         else:
             NUMERATOR = self.confusion_matrix.T.astype('float')
             norm_conf_mat = (NUMERATOR / DENOMINATOR).T
-        rounded = np.around(norm_conf_mat, decimals = self.digits)
-        return rounded
+        rounded_matrix = np.around(norm_conf_mat, decimals = self.digits)
+        return rounded_matrix
+
     def get_metrics_dictionary(self) -> dict:
         """_summary_
         
