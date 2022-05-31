@@ -2,6 +2,7 @@ import requests
 import os
 import csv
 import pickle
+import pandas as pd
 
 class Dataset(object) : 
 
@@ -17,11 +18,15 @@ class Dataset(object) :
         """
         
         self.dataset_save_dir = dataset_save_dir
+
         self.URL = None
         self.BASEURL = None
         self.dataset_name = None
+        self.dataset_path = None
         self.shape = None
         self.description = None
+        self.i = None
+        self._data = None
         pass
 
     def __call__(self) -> None:
@@ -44,20 +49,13 @@ class Dataset(object) :
 
     def _save_dir_exists(self) -> bool : 
 
-        dataset_basedir = os.path.basename(self.dataset_save_dir)
-
-        if not os.path.isdir(dataset_basedir) :
-            raise ValueError('Unable to find the base directory {} for dataset directory {}'.format(dataset_basedir, 
-                                                                                                self.dataset_save_dir))
-
         if not os.path.isdir(self.dataset_save_dir) : 
             os.mkdir(self.dataset_save_dir)
-            return False
 
         return True
 
 
-    def _download(self) -> bool : 
+    def _download(self) -> csv.DictReader : 
         """Base class that downloads the dataset from an online path. 
 
         Args:
@@ -66,12 +64,17 @@ class Dataset(object) :
         Returns:
             bool: _description_
         """
-        r = requests.get(self.URL)
-        lines = r.content.split('\n')
-        data = csv.reader(lines, delimiter='\t')
+        pass
 
-        with open(os.path.join(self.dataset_save_dir , self.BASEURL) , 'wb') as f : 
-            f.write(data)
+    def _load_data(self) -> None:
+
+        if self._save_dir_exists() : 
+            if self._dataset_file_exists() : 
+                with open(self.dataset_path, 'rb') as f : 
+                    self._data = pickle.load(f)
+
+            else : 
+                self._data = self._download() 
 
 
     def data(self) : 
@@ -83,6 +86,6 @@ class Dataset(object) :
     def info(self) -> None : 
         pass
 
-    def analyze(self) -> None : 
+    def submit(self) -> None : 
         pass
 
