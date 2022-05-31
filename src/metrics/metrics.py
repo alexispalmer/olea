@@ -1,7 +1,7 @@
 import pandas as pd
+import numpy as np
 from sklearn.metrics import confusion_matrix, classification_report
 # precision_recall_fscore_support, auc
-import numpy as np
 
 class Metrics:
     def __init__(self, y_true: list, y_pred: list) -> None:
@@ -37,7 +37,7 @@ class Metrics:
                                  index = self.y_true_names,
                                  columns = self.y_true_names).round(self._digits)
         print(pandas_cf)
-        
+
     def get_metrics_dictionary(self) -> dict:
         """_summary_
         
