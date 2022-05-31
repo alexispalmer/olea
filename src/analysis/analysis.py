@@ -3,17 +3,13 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 class Analysis:
-    def __init__(self,cold,y_pred):
+    def __init__(self,cold):
         """Initialize analysis class
 
         Args:
-            cold (dataframe): cold data
-            y_pred (list): predicted labels for each entry in form of 0/1
+            cold (dataframe): cold data including comun "pred" (predicted labels for each entry in form of 0/1)
         """
         self.cold = cold
-        self.y_pred = y_pred
-        self.cold_combine = self.cold
-        self.cold_combine['pred'] = self.y_pred.T
 
     def check_string_len(self):
         """Analyze and plot how the model performs on instances of different lengths using a histogram
@@ -25,7 +21,8 @@ class Analysis:
             df: percent correct of model predictions on different text length ranges
         """
         
-        cold = self.cold_combine
+        cold = self.cold
+        
         #update dataframe for this task
         cold['text_len'] = cold['Text'].apply(len)
         correct_preds = cold[(cold['pred'] ==cold['Q1'])]
@@ -68,7 +65,7 @@ class Analysis:
         Returns:
             df: percent correct of model predictions on instances containing substring vs not
         """
-        cold =self.cold_combine        
+        cold =self.cold      
         #find instances of hashtags/ vs no hashtags
         ss = cold[cold['Text'].str.contains(substring)]
         no_ss = cold[~cold['Text'].str.contains(substring)]
@@ -96,10 +93,10 @@ class Analysis:
         return ss_results
     
     def check_confidence(self):
-        return
+        pass
 
     def check_anno_agreement(self):
-        return
+        pass
 
     
     
