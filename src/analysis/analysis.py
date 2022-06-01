@@ -8,6 +8,7 @@ class Analysis:
 
         Args:
             cold (dataframe): cold data including comun "pred" (predicted labels for each entry in form of 0/1)
+            show_examples (boolean): if textual examples (potentially containing offensive language) should be displayed
         """
         
         self.cold = cold
@@ -20,7 +21,8 @@ class Analysis:
            self(Analysis): instance of analysis class
         
         Returns:
-            df: percent correct of model predictions on different text length ranges
+            df: percent correct of model predictions on different text length ranges 
+            df: cold dataset with new feature of text length range for metrics usage
         """
         
         cold = self.cold
@@ -72,17 +74,18 @@ class Analysis:
         if self.show_examples:
              self.get_examples(cold_text_len,new_feature,sort_list = True)
         
-        return cold_text_len
+        return str_len_results, cold_text_len
 
 
     def check_substring(self,substring):
-        """check how model predicts on instances containing a specific substring vs without that substrig
+        """check how model predicts on instances containing a specific substring vs without that substring
 
         Args:
             substring (string): substring to find in instances
 
         Returns:
             df: percent correct of model predictions on instances containing substring vs not
+            df: cold dataset with new feature of 'contains substring' for metrics usage
         """
         cold =self.cold      
         #find instances of substring/ vs no substring
@@ -118,7 +121,7 @@ class Analysis:
         if self.show_examples:
             self.get_examples(cold_ss,new_feature,sort_list = False)
         
-        return cold_ss
+        return ss_results, cold_ss
     
     def check_confidence(self):
         pass
@@ -127,6 +130,16 @@ class Analysis:
         pass
     
     def check_anno_agreement(self,num_annotators):
+        """check how model predicts on instances where annotators fully agree in whether text is offensive ("Y","Y","Y") or ("N","N","N).
+            vs when there is partial agreement. This should indicate performance on "easy" (full) vs "difficult" (partial) cases
+
+        Args:
+            num_annotators (int): number of annotators used to determine full vs partial agreement
+
+        Returns:
+            df: percent correct of model predictions on full vs partial annotator agreement
+            df: cold dataset with new feature of 'Full Agreement' for metrics usage
+        """
         cold = self.cold
          
         #find indices of full/ partial agreement
@@ -169,7 +182,7 @@ class Analysis:
         if self.show_examples:
              self.get_examples(cold_agree,new_feature,sort_list = False)
             
-        return cold_agree
+        return agree_results, cold_agree
     
     
     def category_performance():
@@ -177,6 +190,14 @@ class Analysis:
         
     
     def plot_bar_graph(self,labels, totals, correct_predictions,title):
+        """plots bar graph for different analyses
+
+        Args:
+            labels (_type_): labels to be used for x axis
+            totals (_type_): number of total instances for each class
+            correct_predictions (_type_): number of correctly predicted instances for each class
+            title (_type_): title of graph
+        """
         plt.bar(labels,totals, color="red",label = "Total",edgecolor='black')
         plt.bar(labels,correct_predictions,color="blue", label ="Correct Prediciton",edgecolor='black')
         plt.legend(loc="upper right")
@@ -184,6 +205,13 @@ class Analysis:
         plt.show()
         
     def get_examples(self,df,column,sort_list):
+        """pull examples to illustrate specific cases. Prints out one text examples from each value present in the specified column.
+
+        Args:
+            df (df): data to pull from, containing text data
+            column (string): column name to evaluate on
+            sort_list (boolean): if the values need to be sorted for presentation (currently just used by text_length analysis)
+        """
         column_vals = np.unique(df[column])
         if sort_list:
             column_vals = sorted(column_vals,key=lambda x: float(x.split('-')[0].replace(',','')))
