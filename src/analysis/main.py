@@ -49,7 +49,7 @@ num_annotators = 1
 
 #run analysis
 str_len_results = myAnalysis.check_string_len()
-print("\n")
+print("\n") 
 hashtag_results = myAnalysis.check_substring("#")
 print("\n")
 quotes_results = myAnalysis.check_substring('"')
