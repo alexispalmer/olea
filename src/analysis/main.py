@@ -10,6 +10,7 @@ from analysis.analysis import Analysis
 import pandas as pd
 import numpy as np
 
+pd.set_option('display.max_columns', None)
 
 
 #create cold
@@ -21,32 +22,40 @@ y = np.random.choice(["Y","N"],size=(1,len(cold)))
 OffMaj = []
 SlurMaj =[]
 NomMaj = []
+DistMaj = []
 
 for i in range((cold.shape[0])):
     offs = [cold.Off1[i],cold.Off2[i],cold.Off3[i]]
     slurs = [cold.Slur1[i],cold.Slur2[i],cold.Slur3[i]]
     noms = [cold.Nom1[i],cold.Nom2[i],cold.Nom3[i]]
+    dists = [cold.Dist1[i],cold.Dist2[i],cold.Dist3[i]]
     
     OffMaj.append(max(set(offs), key=offs.count))
-    SlurMaj.append(max(set(offs), key=slurs.count))
-    NomMaj.append(max(set(offs), key=noms.count))
+    SlurMaj.append(max(set(slurs), key=slurs.count))
+    NomMaj.append(max(set(noms), key=noms.count))
+    DistMaj.append(max(set(dists), key=dists.count))
 
 #add to dataset    
 cold["OffMaj"] = OffMaj
 cold["SlurMaj"] = SlurMaj
 cold["NomMaj"] = NomMaj
+cold["DistMaj"] = DistMaj
 cold["pred"] = y.T
 
 #create class
-show_examples = True
+show_examples = 1
 myAnalysis= Analysis(cold,show_examples)
-num_annotators = 3
+num_annotators = 1
 
-# #run analysis
+#run analysis
 str_len_results = myAnalysis.check_string_len()
 print("\n")
 hashtag_results = myAnalysis.check_substring("#")
 print("\n")
 quotes_results = myAnalysis.check_substring('"')
 print("\n")
-analysis_results = myAnalysis.check_anno_agreement(num_annotators)
+anno_results = myAnalysis.check_anno_agreement(num_annotators)
+print("\n")
+cat_results = myAnalysis.category_performance()
+print("\n")
+anno_2_results = myAnalysis.anno_fine_grained()
