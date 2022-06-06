@@ -3,6 +3,7 @@ import os
 import csv
 import pickle
 import pandas as pd
+import numpy as np
 
 class Dataset(object) : 
 
@@ -25,9 +26,10 @@ class Dataset(object) :
         self.dataset_path = None
         self.shape = None
         self.description = None
-        self.i = None
         self._data = None
-        pass
+        self.data_columns = None
+        self.label_columns = None
+        self.unique_labels = None
 
     def __call__(self) -> None:
         pass
@@ -55,7 +57,7 @@ class Dataset(object) :
         return True
 
 
-    def _download(self) -> csv.DictReader : 
+    def _download(self) : 
         """Base class that downloads the dataset from an online path. 
 
         Args:
@@ -76,16 +78,78 @@ class Dataset(object) :
             else : 
                 self._data = self._download() 
 
+    def _find_unique_labels(self) :
+        self.unique_labels = pd.unique(self._data[self.label_columns].values.ravel('K'))
+
+    def _validate_predictions(self, dataset, submission, map=None) :
+
+        if type(submission) not in [list, np.ndarray, pd.Series, tuple] : 
+            raise TypeError('Expected submission to be in the form of one of the following types : '
+            'list, np.ndarray, pd.Series, tuple')
+        if map is None : 
+            predictions = submission
+        else : 
+            predictions = self._map_submission_to_predictions(submission, map)
+
+        if len(dataset) != len(predictions) : 
+            raise ValueError('There is a mismatch in dataset of len() and prediction of len()'.format(len(dataset) , len(predictions)))
+
+        if self.unique_labels is None : 
+            self._find_unique_labels()
+
+        for prediction in predictions : 
+            if prediction not in self.unique_labels : 
+                raise ValueError('You have submitted a prediction that does not have a basis in grountruth. Please provide a mapping.')
+
+        return predictions
+
+
+    def _map_submission_to_predictions(self, submission, map) :
+
+        if self.unique_labels is None : 
+            self._find_unique_labels() 
+
+        if not all(sub in map.keys() for sub in submission) :
+            raise ValueError('Problem encountered with one or more of your submissions.'
+            'Please check if all submissions has a mapping.')
+
+        if not all(label in self.unique_labels for label in map.values()) :
+            raise ValueError('One or more of the mappings provided couldnt be traced back to a '
+            'label in the groundtruth.')
+
+        return [map[sub] for sub in submission]
 
     def data(self) : 
-        pass
+        return self._data[self.data_columns]
 
-    def generator(self) -> None : 
-        pass
+    def generator(self, batch_size) -> pd.DataFrame:
+        
+        start = 0
+        end = batch_size
+
+        while True : 
+
+            if end < self._data.shape[0] :
+
+                batch = self._data.loc[start:end, self.data_columns]
+                start +=  batch_size
+                end  = start + batch_size
+
+            elif end >= self._data.shape[0] : 
+                start, end = self._data.shape[0] - batch_size, self._data.shape[0]
+                batch = self._data.loc[start:end, self.data_columns]
+                start, end = 0, batch_size
+                
+            yield batch
 
     def info(self) -> None : 
         pass
 
-    def submit(self) -> None : 
+    def submit(self, dataset:pd.DataFrame, submission:iter, map:dict=None) -> None : 
+
+        valid_predictions = self._validate_predictions(dataset, submission, map)
+        dataset['preds'] = valid_predictions
+        print(dataset)
+        # To Marie's Analysis engine
         pass
 

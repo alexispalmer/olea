@@ -1,4 +1,5 @@
 import os
+import numpy as np
 import pandas as pd
 import pickle
 import requests
@@ -13,8 +14,8 @@ class COLD(Dataset) :
         self.BASEURL = os.path.basename(self.URL)
         self.description = 'This is the dataset from COLD.'
         self.dataset_path = os.path.join(self.dataset_save_dir, self.BASEURL)
-        self.i = 0
         self.data_columns = ['ID', 'DataSet', 'Text']
+        self.label_columns = ['Off1', 'Off2', 'Off3']
 
     def _download(self) -> None :
         r = requests.get(self.URL)
@@ -32,44 +33,41 @@ class COLD(Dataset) :
             
         return df
 
-    def data(self) : 
-        '''
-        TODO : Filters to apply before getting the data. 
-        '''
-        return self._data[self.data_columns]
-
-    def generator(self, batch_size) -> None:
-        
-        start = 0
-        end = batch_size
-
-        while True : 
-
-            if end < self._data.shape[0] :
-
-                batch = self._data.loc[start:end, self.data_columns]
-                start +=  batch_size
-                end  = start + batch_size
-
-            elif end >= self._data.shape[0] : 
-                start, end = self._data.shape[0] - batch_size, self._data.shape[0]
-                batch = self._data.loc[start:end, self.data_columns]
-                start, end = 0, batch_size
-                
-
-            yield batch
-
-    
 
 if __name__ == '__main__' : 
 
     cold = COLD('cold')
     cold._load_data()
 
+    print('Testing Generator')
+
     gen = cold.generator(64)    
 
     print(next(gen))
     print(next(gen))
     print(next(gen))
+
+    print('Testing submission')
+
+    dataset = next(gen)
+
+    dataset.head()
+
+    num_preds = dataset.shape[0]
+
+    yn_preds = np.random.choice(['Y' , 'N'], size=num_preds)
+    bool_preds = np.random.choice([True, False], size=num_preds)
+
+    map = {True : 'Y' , False:'N'}
+
+    print('Yes-No Preds')
+
+    cold.submit(dataset, yn_preds)
+    
+    print('True-False Preds')
+
+    cold.submit(dataset, bool_preds , map)
+
+
  
 
