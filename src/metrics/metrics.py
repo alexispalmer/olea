@@ -141,7 +141,7 @@ class Metrics:
             image_filename (str, optional): The name of the image file. Defaults to "roc_curve".
             class_line_width (int, optional): Controls how wide the lines the multiple classes should be. Defaults to 1.
             macro_average_line_width (int, optional): Controls how wide the dashed line of the macro average of the ROC curves is. Defaults to 3.
-            color_list (list, optional): A list of colors. Length should be the same as the number of classes. Defaults to []. If the user doesn't specify a color list, self._distinct_colors will be used, which is automatically generated if the user doesn't specify a color list.
+            color_list (list, optional): A list of colors. Length should be the same as the number of classes. Defaults to []. If the user doesn't specify a color list, self._distinct_colors will be used, which is automatically generated.
         """
         
         self._setup_aucroc(y_softmax_probs)
