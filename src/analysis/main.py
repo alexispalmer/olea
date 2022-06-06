@@ -9,9 +9,9 @@ TESTING FOR ANALYSIS
 from analysis.analysis import Analysis
 import pandas as pd
 import numpy as np
+from metrics.metrics import Metrics
 
 pd.set_option('display.max_columns', None)
-
 
 #create cold
 cold =pd.read_csv('data/cold_mock_data.tsv',sep='\t',encoding='utf-8')
@@ -44,18 +44,14 @@ cold["pred"] = y.T
 
 #create class
 show_examples = 1
-myAnalysis= Analysis(cold,show_examples)
 num_annotators = 1
+
+myAnalysis= Analysis(cold,show_examples)
 
 #run analysis
 str_len_results = myAnalysis.check_string_len()
-print("\n")
 hashtag_results = myAnalysis.check_substring("#")
-print("\n")
 quotes_results = myAnalysis.check_substring('"')
-print("\n")
-anno_results = myAnalysis.check_anno_agreement(num_annotators)
-print("\n")
+anno_agree_results = myAnalysis.check_anno_agreement(num_annotators)
 cat_results = myAnalysis.category_performance()
-print("\n")
-anno_2_results = myAnalysis.anno_fine_grained()
+anno_fg_results = myAnalysis.anno_fine_grained()

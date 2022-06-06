@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from metrics.metrics import Metrics
 
 class Analysis:
     def __init__(self,cold,show_examples):
@@ -22,6 +23,7 @@ class Analysis:
         
         Returns:
             df: percent correct of model predictions on different text length ranges 
+            df: multi-index metrics for each class 
         """
         
         cold = self.cold
@@ -31,8 +33,8 @@ class Analysis:
         correct_preds = cold[(cold['pred'] ==cold['OffMaj'])]
         
         #plot histogram
-        n,bins,_ = plt.hist(cold["text_len"],color="red",label = "Total",edgecolor='black')
-        n_correct,_,_ = plt.hist(correct_preds["text_len"],bins =bins,color="blue", label ="Correct Prediciton",edgecolor='black')
+        bin_vals,bins,_ = plt.hist(cold["text_len"],color="red",label = "Total",edgecolor='black')
+        bin_vals_correct,_,_ = plt.hist(correct_preds["text_len"],bins =bins,color="blue", label ="Correct Prediciton",edgecolor='black')
         plt.legend(loc="upper right")
         plt.xlabel("Text Length")
         plt.title("Predictions on Different Text Lengths")
@@ -46,8 +48,8 @@ class Analysis:
         i = 0
         while i <len(bins)-1:
             ranges.append(str(np.fix(bins[i])) + " - " +str(np.fix(bins[i+1])))
-            if n[i]:
-                percents.append(n_correct[i]/n[i])
+            if bin_vals[i]:
+                percents.append(bin_vals_correct[i]/bin_vals[i])
             else:
                 percents.append(0)
             i+=1 
@@ -63,14 +65,17 @@ class Analysis:
         
         cold[new_feature] = new_feature_list
         
-        #print histogram information
-        results = pd.DataFrame({new_feature : ranges, "Total": n, "Total_Correct_Predictions": n_correct, "Percent_Correct": percents})
-        #print examples
+        #put histogram info into df
+        results = pd.DataFrame({new_feature : ranges, "Total": bin_vals, "Total_Correct_Predictions": bin_vals_correct, "Percent_Correct": percents})
+        
+        #find examples
         if self.show_examples:
              results = self.get_examples(cold,new_feature,results, sort_list = True)
         
-        print(results)
-        return results
+        #combine metrics into one
+        metrics_df = self.get_metrics(new_feature)
+        #results = pd.merge(results, metrics_df,how = "left", right_index = True, left_on = new_feature)
+        return results,metrics_df
 
 
     def check_substring(self,substring):
@@ -81,6 +86,7 @@ class Analysis:
 
         Returns:
             df: percent correct of model predictions on instances containing substring vs not
+            df: multi-index metrics for each class 
         """
         cold =self.cold      
         #find instances of substring/ vs no substring
@@ -116,8 +122,11 @@ class Analysis:
         if self.show_examples:
             results = self.get_examples(cold,new_feature,results)
         
-        print(results)
-        return results
+        #combine metrics into one
+        metrics_df = self.get_metrics(new_feature)
+        #results = pd.merge(results, metrics_df, how = "left", right_index = True, left_on = new_feature)
+        
+        return results,metrics_df
     
     def check_confidence(self):
         pass
@@ -135,6 +144,7 @@ class Analysis:
         
         Returns:
             df: percent correct of model predictions on different offesniveness rankings
+            df: multi-index metrics for each class 
         """
         cold = self.cold
         #create annotation rankings
@@ -173,9 +183,12 @@ class Analysis:
         
         #plot bar graph
         self.plot_bar_graph(results[new_feature],results.Total, results["Total_Correct_Predictions"], "Predictions on Fine-Grained Annotations", rot = 0, xlabel = "Number of Annotators that Marked Instance Offesive")
-        print(results)
         
-        return results
+        #combine metrics into one
+        metrics_df = self.get_metrics(new_feature)
+       # results = pd.merge(results, metrics_df, how = "left",right_index = True, left_on = new_feature)
+        
+        return results,metrics_df
         
         
     
@@ -189,6 +202,7 @@ class Analysis:
 
         Returns:
             df: percent correct of model predictions on full vs partial annotator agreement
+            df: multi-index metrics for each class 
         """
         cold = self.cold
          
@@ -232,8 +246,11 @@ class Analysis:
         if self.show_examples:
              results = self.get_examples(cold_agree,new_feature,results)
         
-        print(results)   
-        return results
+        #combine metrics into one
+        metrics_df = self.get_metrics(new_feature)
+        #results = pd.merge(results, metrics_df, how = "left", right_index = True, left_on = new_feature)
+        
+        return results,metrics_df
     
     
     def category_performance(self):
@@ -245,6 +262,7 @@ class Analysis:
 
         Returns:
             df: percent correct of model predictions on full vs partial annotator agreement
+            df: multi-index metrics for each class 
         """
         cold =self.cold 
         
@@ -292,11 +310,14 @@ class Analysis:
         if self.show_examples:
             results = self.get_examples(cold,new_feature,results)
         
-        print(results)
         #plot bar chart
         self.plot_bar_graph(results[new_feature],results.Total, results["Total_Correct_Predictions"], "Predictions on Fine-Grained Categories",rot = 45,xlabel = "Category")
         
-        return results
+        #combine metrics into one
+        metrics_df = self.get_metrics(new_feature)
+        #results = pd.merge(results, metrics_df,how = "left", right_index = True, left_on = new_feature)
+        
+        return results,metrics_df
         
     
     
@@ -341,10 +362,29 @@ class Analysis:
             example = np.random.choice(df[df[column] == i]["Text"], 1)
             examples[results_i] = example[0]
             
-        results["Examples"] = examples
+        results["Example"] = examples
         
         return results
         
+    def get_metrics(self, column):
+        metrics_dict = {}
+        column_vals = np.unique(self.cold[column])
+        for value in column_vals:
+            cold_subset = self.cold.loc[self.cold[column] == value]
+            my_metric = Metrics(cold_subset["OffMaj"],cold_subset["pred"])
+           # my_metric.classification_report()
+           # my_metric.confusion_matrix()
+            m_dict = my_metric.get_metrics_dictionary()
+            metrics_dict[value] = m_dict
+       # metrics_df = pd.DataFrame.from_dict(metrics_dict).T
+        
+        reformed_dict = {}
+        for outerKey, innerDict in metrics_dict.items():
+            for innerKey, values in innerDict.items():
+                reformed_dict[(outerKey, innerKey)] = values
+        metrics_df = pd.DataFrame(reformed_dict)
+        
+        return metrics_df
         
         
         
