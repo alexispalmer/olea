@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import warnings
 from sklearn.metrics import confusion_matrix, classification_report
 from sklearn.metrics import auc, roc_curve
 from distinctipy import distinctipy
@@ -15,6 +16,7 @@ class Metrics:
             y_pred (list): A list containing the predicted labels of the data.
         """
         self.__assert_equal_length(y_true, y_pred)
+        self.__check_equal_number_of_classes(y_true, y_pred)
         self.y_true = y_true
         self.y_pred = y_pred
         self.n_classes = len(set(y_true))
@@ -36,6 +38,10 @@ class Metrics:
 
     def __assert_equal_length(self, y_true, y_pred) -> None:
         assert (len(y_true) == len(y_pred)), "The length of the true labels is not the same as the pred labels."
+    
+    def __check_equal_number_of_classes(self, y_true, y_pred) -> None:
+        if len(set(y_true)) != len(set(y_pred)):
+            warnings.warn("WARNING: The number of classes in the true labels and the predicted labels is not the same.")
         
     def __generate_name_to_idx_dict(self):
         self.name_to_idx = dict(enumerate(self.y_true_names))
