@@ -4,6 +4,7 @@ import pandas as pd
 import pickle
 import requests
 from src.data.dataset import Dataset
+from src.analysis.analysis import Analysis
 
 class COLD(Dataset) :
 
@@ -32,6 +33,10 @@ class COLD(Dataset) :
             pickle.dump(df, f)
             
         return df
+
+    def submit(self, dataset: pd.DataFrame, submission: iter, map: dict = None) -> None:
+        dataset = super().submit(dataset, submission, map)
+        Analysis(dataset, show_examples=True)
 
 
 if __name__ == '__main__' : 
@@ -62,11 +67,11 @@ if __name__ == '__main__' :
 
     print('Yes-No Preds')
 
-    cold.submit(dataset, yn_preds)
+    print(cold.submit(dataset, yn_preds))
     
     print('True-False Preds')
 
-    cold.submit(dataset, bool_preds , map)
+    print(cold.submit(dataset, bool_preds , map))
 
 
  

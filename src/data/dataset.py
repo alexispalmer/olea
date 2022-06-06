@@ -148,8 +148,10 @@ class Dataset(object) :
     def submit(self, dataset:pd.DataFrame, submission:iter, map:dict=None) -> None : 
 
         valid_predictions = self._validate_predictions(dataset, submission, map)
-        dataset['preds'] = valid_predictions
-        print(dataset)
-        # To Marie's Analysis engine
-        pass
+
+        submission_df = self._data.loc[self._data.index.isin(dataset.index.values)]
+        submission_df['preds'] = valid_predictions
+
+        return submission_df
+
 
