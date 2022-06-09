@@ -8,11 +8,11 @@ from src.analysis.analysis import Analysis
 
 class COLD(Dataset) :
 
-    def __init__(self, dataset_save_dir: str = '~/cold/') -> None:
+    def __init__(self, dataset_save_dir: str = 'datasets') -> None:
         super().__init__(dataset_save_dir)
         self.dataset_name = 'Complex and Offensive Language Dataset'
         self.URL = 'https://raw.githubusercontent.com/alexispalmer/cold-team/dj_dev/data/cold_mock_data.tsv?token=GHSAT0AAAAAABUE7TWTU4XK5XCKFNN54OQ4YUZGUYQ'
-        self.BASEURL = os.path.basename(self.URL)
+        self.BASEURL = os.path.basename(self.URL).split('?')[0]
         self.description = 'This is the dataset from COLD.'
         self.dataset_path = os.path.join(self.dataset_save_dir, self.BASEURL)
         self.data_columns = ['ID', 'DataSet', 'Text']
@@ -36,7 +36,7 @@ class COLD(Dataset) :
 
     def submit(self, dataset: pd.DataFrame, submission: iter, map: dict = None) -> None:
         dataset = super().submit(dataset, submission, map)
-        Analysis(dataset, show_examples=True)
+        return Analysis(dataset, show_examples=True)
 
 
 if __name__ == '__main__' : 
@@ -47,6 +47,7 @@ if __name__ == '__main__' :
     print('Testing Generator')
 
     gen = cold.generator(64)    
+
 
     print(next(gen))
     print(next(gen))
@@ -67,11 +68,13 @@ if __name__ == '__main__' :
 
     print('Yes-No Preds')
 
-    print(cold.submit(dataset, yn_preds))
-    
-    print('True-False Preds')
+    analysis = cold.submit(dataset, yn_preds)
 
-    print(cold.submit(dataset, bool_preds , map))
+
+    
+    # print('True-False Preds')
+
+    # print(cold.submit(dataset, bool_preds , map))
 
 
  
