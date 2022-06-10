@@ -11,7 +11,7 @@ class COLD(Dataset) :
     def __init__(self, dataset_save_dir: str = 'datasets') -> None:
         super().__init__(dataset_save_dir)
         self.dataset_name = 'Complex and Offensive Language Dataset'
-        self.URL = 'https://raw.githubusercontent.com/alexispalmer/cold-team/dj_dev/data/cold_with_hx_preds.csv'
+        self.URL = 'https://raw.githubusercontent.com/alexispalmer/cold-team/dev_main/data/cold_with_hx_preds.csv?token=GHSAT0AAAAAABUE7TWTCDPIO5OEQQHFK4EOYVDPNSA'
         self.BASEURL = os.path.basename(self.URL).split('?')[0]
         self.description = 'This is the dataset from COLD.'
         self.dataset_path = os.path.join(self.dataset_save_dir, self.BASEURL)
