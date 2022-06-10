@@ -62,12 +62,14 @@ class PreprocessText:
         # Next, find hashtags and segment them into their words.
         preprocess = self.__clean_hashtags(preprocess)
 
-        # Replacing the html and user tokens from earlier to begin and with 
-        # dunder so that any text tokenization keeps it all together.
+        # Replacing the html and user tokens from earlier to begin and end with 
+        # dunder so that any text tokenization (likely) keeps it together as a
+        # single token.
         preprocess = [x.replace("::USER::", "__USER__") for x in preprocess]
         preprocess = [x.replace("::HTML::", "__HTML__") for x in preprocess]
 
         # Some messages have </s><s> in them.  Removing them
+        # Note from AP, DS: This might represent sarcasm in text.  
         preprocess = [x.replace("</s><s>", " ") for x in preprocess]
         preprocess = [x.replace("</s> <s>", " ") for x in preprocess]
 
