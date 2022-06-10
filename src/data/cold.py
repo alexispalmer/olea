@@ -21,7 +21,7 @@ class COLD(Dataset) :
     def _download(self) -> None :
         r = requests.get(self.URL)
         lines = r.content.decode('utf-8').replace('\r' , '').split('\n')
-        lines = [line.split(',') for line in lines]
+        lines = [line.split('\t') for line in lines]
 
         header , data = lines[0] , lines[1:]
 
