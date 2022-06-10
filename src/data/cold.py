@@ -18,7 +18,7 @@ class COLD(Dataset) :
         self.data_columns = ['ID', 'DataSet', 'Text']
         self.label_columns = ['Off1', 'Off2', 'Off3']
 
-    def _download(self) -> None :
+    def _download(self) -> pd.DataFrame:
         r = requests.get(self.URL)
         lines = r.content.decode('utf-8').replace('\r' , '').split('\n')
         lines = [line.split('\t') for line in lines]
