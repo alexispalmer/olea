@@ -2,9 +2,6 @@
 # Requires that emoji and wordsegment be installed
 # pip install emoji
 # pip install wordsegment
-
-import numpy as np
-import pandas as pd
 import re
 import html
 from emoji import demojize
