@@ -34,7 +34,7 @@ class COLD(Dataset) :
             
         return df
 
-    def submit(self, dataset: pd.DataFrame, submission: iter, map: dict = None) -> None:
+    def submit(self, dataset: pd.DataFrame, submission: iter, map: dict = None) -> Analysis:
         dataset = super().submit(dataset, submission, map)
         return Analysis(dataset, show_examples=True)
 
