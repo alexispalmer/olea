@@ -8,17 +8,17 @@ from src.analysis.analysis import Analysis
 
 class COLD(Dataset) :
 
-    def __init__(self, dataset_save_dir: str = '~/cold/') -> None:
+    def __init__(self, dataset_save_dir: str = 'datasets') -> None:
         super().__init__(dataset_save_dir)
         self.dataset_name = 'Complex and Offensive Language Dataset'
-        self.URL = 'https://raw.githubusercontent.com/alexispalmer/cold-team/dj_dev/data/cold_mock_data.tsv?token=GHSAT0AAAAAABUE7TWTU4XK5XCKFNN54OQ4YUZGUYQ'
-        self.BASEURL = os.path.basename(self.URL)
+        self.URL = 'https://raw.githubusercontent.com/alexispalmer/cold-team/dev_main/data/cold_with_hx_preds.tsv?token=GHSAT0AAAAAABRAGOZYTN4XUQA6E7AXVASKYVDQEWA'
+        self.BASEURL = os.path.basename(self.URL).split('?')[0]
         self.description = 'This is the dataset from COLD.'
         self.dataset_path = os.path.join(self.dataset_save_dir, self.BASEURL)
         self.data_columns = ['ID', 'DataSet', 'Text']
         self.label_columns = ['Off1', 'Off2', 'Off3']
 
-    def _download(self) -> None :
+    def _download(self) -> pd.DataFrame:
         r = requests.get(self.URL)
         lines = r.content.decode('utf-8').replace('\r' , '').split('\n')
         lines = [line.split('\t') for line in lines]
@@ -34,9 +34,9 @@ class COLD(Dataset) :
             
         return df
 
-    def submit(self, dataset: pd.DataFrame, submission: iter, map: dict = None) -> None:
+    def submit(self, dataset: pd.DataFrame, submission: iter, map: dict = None) -> Analysis:
         dataset = super().submit(dataset, submission, map)
-        Analysis(dataset, show_examples=True)
+        return Analysis(dataset, show_examples=True)
 
 
 if __name__ == '__main__' : 
@@ -47,6 +47,7 @@ if __name__ == '__main__' :
     print('Testing Generator')
 
     gen = cold.generator(64)    
+
 
     print(next(gen))
     print(next(gen))
@@ -67,11 +68,8 @@ if __name__ == '__main__' :
 
     print('Yes-No Preds')
 
-    print(cold.submit(dataset, yn_preds))
-    
-    print('True-False Preds')
+    analysis = cold.submit(dataset, yn_preds)
 
-    print(cold.submit(dataset, bool_preds , map))
 
 
  

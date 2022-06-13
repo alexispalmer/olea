@@ -59,11 +59,11 @@ class Metrics:
                                  columns = self.y_true_names).round(self._digits)
         print(pandas_cf)
 
-    def _setup_aucroc(self, y_softmax_probs: list):
+    def _setup_aucroc(self, y_softmax_probs: np.array):
         """A protected method to setup the auc-roc plot.
 
         Args:
-            y_softmax_probs (list): This is a list of the predicted probabilities of the data. This expects a list that contains the softmax probs of all classes of all predictions.
+            y_softmax_probs (np.array): This is an np.array of the predicted probabilities of the data. The np.array that contains the softmax probs of all classes of all predictions.
         """
         # Much code for this function is adapted from
         # https://scikit-learn.org/stable/auto_examples/model_selection/plot_roc.html
@@ -125,7 +125,7 @@ class Metrics:
         rounded_matrix = np.around(norm_conf_mat, decimals = self._digits)
         self.__prettify_confusion_matrix(rounded_matrix)
 
-    def plot_roc_curve(self, y_softmax_probs: list, save = True,
+    def plot_roc_curve(self, y_softmax_probs: np.array, save = True,
                        image_filepath = os.getcwd(), 
                        image_filename = "roc_curve", 
                        class_line_width = 1,
@@ -135,7 +135,7 @@ class Metrics:
         user so chooses. 
 
         Args:
-            y_softmax_probs (list): This is a list of the predicted probabilities of the data. This expects a list that contains the softmax probs of all classes of all predictions.
+            y_softmax_probs (np.array): This is an np.array of the predicted probabilities of the data. The np.array that contains the softmax probs of all classes of all predictions.
             save (bool, optional): Save the generated image to file? Defaults to True.
             image_filepath (str, optional): The path to which the image is saved. Defaults to os.getcwd().
             image_filename (str, optional): The name of the image file. Defaults to "roc_curve".

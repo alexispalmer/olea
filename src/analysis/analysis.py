@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from metrics.metrics import Metrics
+from src.metrics.metrics import Metrics
 
 class Analysis:
     def __init__(self,cold,show_examples):
