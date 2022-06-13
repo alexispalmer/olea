@@ -14,6 +14,7 @@ class Analysis:
         
         self.cold = cold
         self.show_examples = show_examples
+        self.cold_labels = ["Y","N"]
 
     def check_string_len(self):
         """Analyze and plot how the model performs on instances of different lengths using a histogram. Updates cold dataset with new feature columns for text length and text length bin
@@ -22,7 +23,7 @@ class Analysis:
            self(Analysis): instance of analysis class
         
         Returns:
-            df: percent correct of model predictions on different text length ranges 
+            df: Accuracy of model predictions on different text length ranges 
             df: multi-index metrics for each class 
         """
         
@@ -32,12 +33,14 @@ class Analysis:
         cold['text_len'] = cold['Text'].apply(len)
         correct_preds = cold[(cold['pred'] ==cold['OffMaj'])]
         
+        
         #plot histogram
+        title = "Predictions on Different Text Lengths"
         bin_vals,bins,_ = plt.hist(cold["text_len"],color="red",label = "Total",edgecolor='black')
         bin_vals_correct,_,_ = plt.hist(correct_preds["text_len"],bins =bins,color="blue", label ="Correct Prediciton",edgecolor='black')
         plt.legend(loc="upper right")
         plt.xlabel("Text Length")
-        plt.title("Predictions on Different Text Lengths")
+        plt.title(title)
         plt.xticks(bins)
         plt.show()
         
@@ -66,7 +69,7 @@ class Analysis:
         cold[new_feature] = new_feature_list
         
         #put histogram info into df
-        results = pd.DataFrame({new_feature : ranges, "Total": bin_vals, "Total_Correct_Predictions": bin_vals_correct, "Percent_Correct": percents})
+        results = pd.DataFrame({new_feature : ranges, "Total": bin_vals, "Total_Correct_Predictions": bin_vals_correct, "Accuracy": percents})
         
         #find examples
         if self.show_examples:
@@ -75,7 +78,7 @@ class Analysis:
         #combine metrics into one
         metrics_df = self.get_metrics(new_feature)
         #results = pd.merge(results, metrics_df,how = "left", right_index = True, left_on = new_feature)
-        return results,metrics_df
+        return metrics_df, results
 
 
     def check_substring(self,substring):
@@ -85,7 +88,7 @@ class Analysis:
             substring (string): substring to find in instances
 
         Returns:
-            df: percent correct of model predictions on instances containing substring vs not
+            df: Accuracy of model predictions on instances containing substring vs not
             df: multi-index metrics for each class 
         """
         cold =self.cold      
@@ -112,8 +115,8 @@ class Analysis:
         self.plot_bar_graph(labels,totals,correct_predictions,title,rot = 0, xlabel= new_feature)
         
         #create df to store results
-        percents = [a/b if b else 0 for a,b in zip(correct_predictions,totals)]
-        results = pd.DataFrame({new_feature : labels,"Total_Correct_Predictions": correct_predictions, "Total": totals,"Percent_Correct": percents})
+        accuracy = [a/b if b else 0 for a,b in zip(correct_predictions,totals)]
+        results = pd.DataFrame({new_feature : labels,"Total_Correct_Predictions": correct_predictions, "Total": totals,"Accuracy": accuracy})
         
         #merge all back together and update dataset
         cold_ss = ss.merge(no_ss,"outer")
@@ -143,7 +146,7 @@ class Analysis:
            self(Analysis): instance of analysis class
         
         Returns:
-            df: percent correct of model predictions on different offesniveness rankings
+            df: Accuracy of model predictions on different offesniveness rankings
             df: multi-index metrics for each class 
         """
         cold = self.cold
@@ -171,8 +174,8 @@ class Analysis:
         #combine bar chat info into dataframe
         totals = cold[new_feature].value_counts().sort_index()
         correct = correct_cold[new_feature].value_counts()
-        percent_correct = correct_cold[new_feature].value_counts()/cold[new_feature].value_counts()
-        results = pd.DataFrame({"Total":totals, "Total_Correct_Predictions": correct, "Percent_Correct": percent_correct})
+        Accuracy = correct_cold[new_feature].value_counts()/cold[new_feature].value_counts()
+        results = pd.DataFrame({"Total":totals, "Total_Correct_Predictions": correct, "Accuracy": Accuracy})
         results = results.reset_index()
         results = results.rename(columns = {'index':new_feature})
         
@@ -201,7 +204,7 @@ class Analysis:
             num_annotators (int): number of annotators used to determine full vs partial agreement
 
         Returns:
-            df: percent correct of model predictions on full vs partial annotator agreement
+            df: Accuracy of model predictions on full vs partial annotator agreement
             df: multi-index metrics for each class 
         """
         cold = self.cold
@@ -237,7 +240,7 @@ class Analysis:
         
         #create df to store results
         percents = [a/b if b else 0 for a,b in zip(correct_predictions,totals)]
-        results = pd.DataFrame({new_feature : ["Y","N"],"Total_Correct_Predictions": correct_predictions, "Total": totals,"Percent_Correct": percents})
+        results = pd.DataFrame({new_feature : ["Y","N"],"Total_Correct_Predictions": correct_predictions, "Total": totals,"Accuracy": percents})
         
         #merge all back together
         cold_agree = full_agree_cold.merge(partial_agree_cold,"outer")
@@ -261,7 +264,7 @@ class Analysis:
             num_annotators (int): number of annotators used to determine full vs partial agreement
 
         Returns:
-            df: percent correct of model predictions on full vs partial annotator agreement
+            df: Accuracy of model predictions on full vs partial annotator agreement
             df: multi-index metrics for each class 
         """
         cold =self.cold 
@@ -302,8 +305,8 @@ class Analysis:
         #combine bar chat info into dataframe
         totals = cold[new_feature].value_counts()
         correct = correct_cold[new_feature].value_counts()
-        percent_correct = correct_cold[new_feature].value_counts()/cold[new_feature].value_counts()
-        results = pd.DataFrame({"Total":totals, "Total_Correct_Predictions": correct, "Percent_Correct": percent_correct})
+        Accuracy = correct_cold[new_feature].value_counts()/cold[new_feature].value_counts()
+        results = pd.DataFrame({"Total":totals, "Total_Correct_Predictions": correct, "Accuracy": Accuracy})
         results = results.reset_index()
         results = results.rename(columns = {'index':new_feature})
         
@@ -314,7 +317,7 @@ class Analysis:
         self.plot_bar_graph(results[new_feature],results.Total, results["Total_Correct_Predictions"], "Predictions on Fine-Grained Categories",rot = 45,xlabel = "Category")
         
         #combine metrics into one
-        metrics_df = self.get_metrics(new_feature)
+        metrics_df = self.get_metrics(new_feature,True)
         #results = pd.merge(results, metrics_df,how = "left", right_index = True, left_on = new_feature)
         
         return results,metrics_df
@@ -338,11 +341,11 @@ class Analysis:
         plt.title(title)
         plt.xticks(ticks = labels, rotation = rot)
         plt.xlabel(xlabel)
-        plt.ylabel("Amount")
+        plt.ylabel("Number of Instances")
         plt.show()
         
     def get_examples(self,df,column,results, sort_list= False):
-        """pull examples to illustrate specific cases. Adds one text examples from each value present in the specified column to results data
+        """pull examples where model output label does not line up with true label to illustrate specific cases. Adds one text examples from each value present in the specified column to results data
 
         Args:
             df (df): data to pull from, containing textual data
@@ -357,36 +360,58 @@ class Analysis:
             column_vals = sorted(column_vals,key=lambda x: float(x.split('-')[0].replace(',','')))
         examples= ["" for x in range(results.shape[0])]
         
+        incorrect_df = df[df["pred"] != df["OffMaj"]]
+        
         for i in column_vals:
             results_i = results.index[results[column] == i][0] #get the results index
-            example = np.random.choice(df[df[column] == i]["Text"], 1)
+            example = np.random.choice(incorrect_df[incorrect_df[column] == i]["Text"], 1)
             examples[results_i] = example[0]
             
-        results["Example"] = examples
+        results["Example with Incorrect Classification"] = examples
         
         return results
         
-    def get_metrics(self, column):
-        metrics_dict = {}
+    def get_metrics(self, column, categories = False):
+     #   df = pd.DataFrame(columns = [column,"Metrics"])
         column_vals = np.unique(self.cold[column])
+        metrics_dict = {}
         for value in column_vals:
             cold_subset = self.cold.loc[self.cold[column] == value]
             my_metric = Metrics(cold_subset["OffMaj"],cold_subset["pred"])
-           # my_metric.classification_report()
-           # my_metric.confusion_matrix()
             m_dict = my_metric.get_metrics_dictionary()
+            del m_dict["accuracy"] #remove accuracy metric, can be viewed elsewhere
+            
+            if categories:
+                #remove unnecessary labels when getting metrics for Fine-grained categories
+                label_to_keep = cold_subset["OffMaj"].iloc[0]
+                if label_to_keep == self.cold_labels[0]:
+                    label_to_drop = self.cold_labels[1]
+                else:
+                    label_to_drop = self.cold_labels[0]
+                
+                for key in m_dict[label_to_drop]:
+                    m_dict[label_to_drop][key] = '-'
+                pass
+            
+           # df = df.append({column: value, "Metrics" : pd.DataFrame(m_dict)}, ignore_index = True)
             metrics_dict[value] = m_dict
-       # metrics_df = pd.DataFrame.from_dict(metrics_dict).T
         
+        
+        #Double index version
         reformed_dict = {}
         for outerKey, innerDict in metrics_dict.items():
             for innerKey, values in innerDict.items():
                 reformed_dict[(outerKey, innerKey)] = values
         metrics_df = pd.DataFrame(reformed_dict)
         
-        return metrics_df
+        multi_indices = pd.MultiIndex.from_tuples(reformed_dict, names=[column, "Metrics"])
+        full_df = pd.DataFrame.from_dict(reformed_dict.values())
+        full_df = full_df.set_index(multi_indices)
         
+        #return df for dataframe version
+        return full_df
         
+    
         
 
         
