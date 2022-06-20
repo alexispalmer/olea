@@ -3,8 +3,10 @@ import numpy as np
 import pandas as pd
 import pickle
 import requests
+
 from src.data.dataset import Dataset
-from src.analysis.analysis import Analysis
+from src.data.dso import DatasetSubmissionObject
+
 
 class COLD(Dataset) :
 
@@ -34,9 +36,29 @@ class COLD(Dataset) :
             
         return df
 
-    def submit(self, dataset: pd.DataFrame, submission: iter, map: dict = None) -> Analysis:
-        dataset = super().submit(dataset, submission, map)
-        return Analysis(dataset, show_examples=True)
+    def submit(self, dataset: pd.DataFrame, submission: iter, map: dict = None) -> DatasetSubmissionObject:
+        submission_df = super().submit(dataset, submission, map)
+        return COLDSubmissionObject(submission_df)
+
+
+class COLDSubmissionObject(DatasetSubmissionObject) : 
+    
+    def __init__(self, submission_df: pd.DataFrame):
+        super().__init__(submission_df)
+
+    def filter_submission(self, on:str, filter:function, **kwargs):
+
+        self.submission['filter_results'] = self.submission[on].apply(filter)
+        filtered_submission = self.submission[self.submission['filter_results'] == True]
+
+        if 'columns' in kwargs : 
+            outputs = [filtered_submission[col] for col in kwargs['columns']]
+            return outputs
+    
+
+        else : 
+            return [filtered_submission['Text'] , filtered_submission['OffMaj'] , filtered_submission['preds']]
+
 
 
 if __name__ == '__main__' : 

@@ -1,6 +1,7 @@
 import pandas as pd
 from abc import abstractmethod, ABC
 
+from typing import List, Tuple
 
 class DatasetSubmissionObject(ABC) : 
 
@@ -9,13 +10,5 @@ class DatasetSubmissionObject(ABC) :
 
 
     @abstractmethod
-    def get_text(self, **kwargs) : 
-        pass
-
-    @abstractmethod
-    def get_groundtruth(self, **kwargs) : 
-        pass
-
-    @abstractmethod
-    def get_predictions(self , **kwargs) : 
+    def filter_submission(self, on:str, filter:function, **kwargs)  : 
         pass
