@@ -1,23 +1,26 @@
-import os 
-import requests
-import pickle
-
+import os
+import numpy as np
 import pandas as pd
+import pickle
+import requests
 
 from src.data.dataset import Dataset
+from src.data.dso import DatasetSubmissionObject
+
 
 class COLD(Dataset) :
 
-    def __init__(self, dataset_save_dir: str = './cold/') -> None:
+    def __init__(self, dataset_save_dir: str = 'datasets') -> None:
         super().__init__(dataset_save_dir)
         self.dataset_name = 'Complex and Offensive Language Dataset'
-        self.URL = 'https://raw.githubusercontent.com/alexispalmer/cold/master/data/cold_mock_data.tsv'
-        self.BASEURL = os.path.basename(self.URL)
+        self.URL = 'https://raw.githubusercontent.com/alexispalmer/cold-team/dev_main/data/cold_with_hx_preds.tsv?token=GHSAT0AAAAAABRAGOZYTN4XUQA6E7AXVASKYVDQEWA'
+        self.BASEURL = os.path.basename(self.URL).split('?')[0]
         self.description = 'This is the dataset from COLD.'
         self.dataset_path = os.path.join(self.dataset_save_dir, self.BASEURL)
-        self.i = 0
+        self.data_columns = ['ID', 'DataSet', 'Text']
+        self.label_columns = ['Off1', 'Off2', 'Off3']
 
-    def _download(self) -> None :
+    def _download(self) -> pd.DataFrame:
         r = requests.get(self.URL)
         lines = r.content.decode('utf-8').replace('\r' , '').split('\n')
         lines = [line.split('\t') for line in lines]
@@ -33,40 +36,63 @@ class COLD(Dataset) :
             
         return df
 
-    def data(self) : 
-        '''
-        TODO : Filters to apply before getting the data. 
-        '''
-        return self._data
+    def submit(self, dataset: pd.DataFrame, submission: iter, map: dict = None) -> DatasetSubmissionObject:
+        submission_df = super().submit(dataset, submission, map)
+        return COLDSubmissionObject(submission_df)
 
-    def generator(self, batch_size) -> None:
-        
-        while True : 
 
-            start = self.i 
-            end = self.i + batch_size
+class COLDSubmissionObject(DatasetSubmissionObject) : 
+    
+    def __init__(self, submission_df: pd.DataFrame):
+        super().__init__(submission_df)
 
-            if end > self._data.shape[0] : 
-                start = self.i 
-                end = self._data.shape[0]
+    def filter_submission(self, on:str, filter:function, **kwargs):
 
-            elif end == self._data.shape[0] : 
-                self.i = 0 
-                start = self.i
-                end = self.i + batch_size
+        self.submission['filter_results'] = self.submission[on].apply(filter)
+        filtered_submission = self.submission[self.submission['filter_results'] == True]
 
-            yield self._data.iloc[start:end, :]
-
+        if 'columns' in kwargs : 
+            outputs = [filtered_submission[col] for col in kwargs['columns']]
+            return outputs
     
 
-        
-        
+        else : 
+            return [filtered_submission['Text'] , filtered_submission['OffMaj'] , filtered_submission['preds']]
+
+
+
 if __name__ == '__main__' : 
 
-    cold = COLD()
+    cold = COLD('cold')
     cold._load_data()
-    print(cold.data())
-    # print(len(cold.data))
-    # print(cold.data.head())
-    # cold.data[cold.data['ID'=='D-373']]
-    
+
+    print('Testing Generator')
+
+    gen = cold.generator(64)    
+
+
+    print(next(gen))
+    print(next(gen))
+    print(next(gen))
+
+    print('Testing submission')
+
+    dataset = next(gen)
+
+    dataset.head()
+
+    num_preds = dataset.shape[0]
+
+    yn_preds = np.random.choice(['Y' , 'N'], size=num_preds)
+    bool_preds = np.random.choice([True, False], size=num_preds)
+
+    map = {True : 'Y' , False:'N'}
+
+    print('Yes-No Preds')
+
+    analysis = cold.submit(dataset, yn_preds)
+
+
+
+ 
+

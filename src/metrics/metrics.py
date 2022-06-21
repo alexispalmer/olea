@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import warnings
 from sklearn.metrics import confusion_matrix, classification_report
 from sklearn.metrics import auc, roc_curve
 from distinctipy import distinctipy
@@ -15,6 +16,7 @@ class Metrics:
             y_pred (list): A list containing the predicted labels of the data.
         """
         self.__assert_equal_length(y_true, y_pred)
+        self.__check_equal_number_of_classes(y_true, y_pred)
         self.y_true = y_true
         self.y_pred = y_pred
         self.n_classes = len(set(y_true))
@@ -36,6 +38,10 @@ class Metrics:
 
     def __assert_equal_length(self, y_true, y_pred) -> None:
         assert (len(y_true) == len(y_pred)), "The length of the true labels is not the same as the pred labels."
+    
+    def __check_equal_number_of_classes(self, y_true, y_pred) -> None:
+        if len(set(y_true)) != len(set(y_pred)):
+            warnings.warn("WARNING: The number of classes in the true labels and the predicted labels is not the same.")
         
     def __generate_name_to_idx_dict(self):
         self.name_to_idx = dict(enumerate(self.y_true_names))
@@ -53,11 +59,11 @@ class Metrics:
                                  columns = self.y_true_names).round(self._digits)
         print(pandas_cf)
 
-    def _setup_aucroc(self, y_score: list):
+    def _setup_aucroc(self, y_softmax_probs: np.array):
         """A protected method to setup the auc-roc plot.
 
         Args:
-            y_score (list): This is a list of the predicted probabilities of the data. This expects a list generated from sklearn's predict_proba method.
+            y_softmax_probs (np.array): This is an np.array of the predicted probabilities of the data. The np.array that contains the softmax probs of all classes of all predictions.
         """
         # Much code for this function is adapted from
         # https://scikit-learn.org/stable/auto_examples/model_selection/plot_roc.html
@@ -66,7 +72,7 @@ class Metrics:
         roc_auc = dict()
         y_true_as_idx = np.array([self.name_to_idx.get(x) for x in self.y_true])
         for i in range(self.n_classes):
-            fpr[i], tpr[i], _ = roc_curve(y_true_as_idx == i, y_score[:, i])
+            fpr[i], tpr[i], _ = roc_curve(y_true_as_idx == i, y_softmax_probs[:, i])
             roc_auc[i] = auc(fpr[i], tpr[i])
         all_fpr = np.unique(np.concatenate([fpr[i] for i in range(self.n_classes)]))
         mean_tpr = np.zeros_like(all_fpr)
@@ -119,7 +125,7 @@ class Metrics:
         rounded_matrix = np.around(norm_conf_mat, decimals = self._digits)
         self.__prettify_confusion_matrix(rounded_matrix)
 
-    def plot_roc_curve(self, y_score: list, save = True,
+    def plot_roc_curve(self, y_softmax_probs: np.array, save = True,
                        image_filepath = os.getcwd(), 
                        image_filename = "roc_curve", 
                        class_line_width = 1,
@@ -129,16 +135,16 @@ class Metrics:
         user so chooses. 
 
         Args:
-            y_score (list): A list of the predicted probabilities of the data. This expects a list generated from sklearn's predict_proba method.
+            y_softmax_probs (np.array): This is an np.array of the predicted probabilities of the data. The np.array that contains the softmax probs of all classes of all predictions.
             save (bool, optional): Save the generated image to file? Defaults to True.
-            image_filepath (_type_, optional): The path to which the image is saved. Defaults to os.getcwd().
+            image_filepath (str, optional): The path to which the image is saved. Defaults to os.getcwd().
             image_filename (str, optional): The name of the image file. Defaults to "roc_curve".
             class_line_width (int, optional): Controls how wide the lines the multiple classes should be. Defaults to 1.
             macro_average_line_width (int, optional): Controls how wide the dashed line of the macro average of the ROC curves is. Defaults to 3.
-            color_list (list, optional): A list of colors. Length should be the same as the number of classes. Defaults to []. If the user doesn't specify a color list, self._distinct_colors will be used. This list is automatically generated if the user doesn't specify a color list.
+            color_list (list, optional): A list of colors. Length should be the same as the number of classes. Defaults to []. If the user doesn't specify a color list, self._distinct_colors will be used, which is automatically generated.
         """
         
-        self._setup_aucroc(y_score)
+        self._setup_aucroc(y_softmax_probs)
         if len(color_list) == 0:
             color_list = self._distinct_colors
         # Much code for this function is adapted from
