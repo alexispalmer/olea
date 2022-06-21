@@ -46,7 +46,7 @@ class COLDSubmissionObject(DatasetSubmissionObject) :
     def __init__(self, submission_df: pd.DataFrame):
         super().__init__(submission_df)
 
-    def filter_submission(self, on:str, filter:function, **kwargs):
+    def filter_submission(self, on:str, filter:callable, **kwargs):
 
         self.submission['filter_results'] = self.submission[on].apply(filter)
         filtered_submission = self.submission[self.submission['filter_results'] == True]
@@ -57,7 +57,7 @@ class COLDSubmissionObject(DatasetSubmissionObject) :
     
 
         else : 
-            return [filtered_submission['Text'] , filtered_submission['OffMaj'] , filtered_submission['preds']]
+            return [filtered_submission['Text'] , filtered_submission['Off'] , filtered_submission['preds']]
 
 
 

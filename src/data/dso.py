@@ -10,5 +10,5 @@ class DatasetSubmissionObject(ABC) :
 
 
     @abstractmethod
-    def filter_submission(self, on:str, filter:function, **kwargs)  : 
+    def filter_submission(self, on:str, filter:callable, **kwargs)  : 
         pass
