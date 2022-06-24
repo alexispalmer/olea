@@ -7,8 +7,8 @@ def plot_bar_graph(labels, totals, correct_predictions,
 
     Args:
         labels (list): labels to be used for x axis
-        totals (list: number of total instances for each class
-        correct_predictions (list): number of correctly predicted instances for each class
+        totals (list): number of total instances for each category
+        correct_predictions (list): number of correctly predicted instances for each category
         title (str): title of graph
         rot (int): rotation for x-axis ticks
         xlabel (str): x label
