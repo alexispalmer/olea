@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 from src.metrics.metrics import Metrics
 from src.viz.viz import plot_bar_graph, plot_histogram, histogram_values
 
@@ -328,8 +328,6 @@ class Analysis:
         #results = pd.merge(results, metrics_df,how = "left", right_index = True, left_on = new_feature)
         
         return results,metrics_df
-        
-    
     
     # def plot_bar_graph(self,labels, totals, correct_predictions,title,rot = 0,xlabel=""):
     #     """plots bar graph for different analyses
