@@ -47,5 +47,5 @@ with open('data/cold_mock_data.tsv' , 'w') as f :
 
 df = pd.read_csv('data/cold_mock_data.tsv', sep='\t')
 
-with open('cold/cold_mock_data.tsv' , 'wb') as f : 
-    pickle.dump(df , f)
+# with open('cold/cold_mock_data.tsv' , 'wb') as f : 
+#     pickle.dump(df , f)

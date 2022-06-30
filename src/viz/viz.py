@@ -23,11 +23,12 @@ def plot_bar_graph(labels, totals, correct_predictions,
     plt.ylabel("Number of Instances")
     plt.show()
 
-def plot_histogram(legend_location = 'upper right', title = "", 
+def plot_histogram(hist_bins,legend_location = 'upper right', title = "", 
                    xlabel = "", ylabel = "Num. of Instances", 
                    list_of_values = [], 
-                   correct_preds = []):
-    _, bins, _ = plt.hist(list_of_values, color="red", 
+                   correct_preds = [],
+                   ):
+    _, bins, _ = plt.hist(list_of_values,bins=hist_bins, color="red", 
                         label = "Total",edgecolor='black')
     _, _, _ = plt.hist(correct_preds,bins = bins, 
                         color="blue", 
@@ -48,4 +49,5 @@ def histogram_values(list_of_values = [],
                                       color="blue", 
                                       label = "Correct Prediciton", 
                                       edgecolor='black')
+    plt.close()
     return bins, bin_vals, bin_vals_correct
