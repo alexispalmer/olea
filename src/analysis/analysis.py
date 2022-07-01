@@ -1,7 +1,8 @@
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 from src.metrics.metrics import Metrics
+from src.viz.viz import plot_bar_graph, plot_histogram, histogram_values
 
 class Analysis:
     def __init__(self,cold,show_examples):
@@ -35,15 +36,21 @@ class Analysis:
         
         
         #plot histogram
-        title = "Predictions on Different Text Lengths"
-        bin_vals,bins,_ = plt.hist(cold["text_len"],color="red",label = "Total",edgecolor='black')
-        bin_vals_correct,_,_ = plt.hist(correct_preds["text_len"],bins =bins,color="blue", label ="Correct Prediciton",edgecolor='black')
-        plt.legend(loc="upper right")
-        plt.xlabel("Text Length")
-        plt.title(title)
-        plt.xticks(bins)
-        plt.show()
-        
+        plot_histogram(title = "Predictions on Different Text Lengths", 
+                       xlabel = "Text Length",
+                       list_of_values =  cold['text_len'],
+                       correct_preds = correct_preds,)
+        # title = "Predictions on Different Text Lengths"
+        # bin_vals,bins,_ = plt.hist(cold["text_len"],color="red",label = "Total",edgecolor='black')
+        # bin_vals_correct,_,_ = plt.hist(correct_preds["text_len"],bins =bins,color="blue", label ="Correct Prediciton",edgecolor='black')
+        # plt.legend(loc="upper right")
+        # plt.xlabel("Text Length")
+        # plt.title(title)
+        # plt.xticks(bins)
+        # plt.show()
+
+        bins, bin_vals, bin_vals_correct = histogram_values(cold["text_len"],
+                                                correct_preds["text_len"])
 
         #combine histogram info for printing
         ranges = []
@@ -112,7 +119,7 @@ class Analysis:
         
         #plot bar graph        
         title = str("Predictions on Text with " + "'"+ substring+ "'")
-        self.plot_bar_graph(labels,totals,correct_predictions,title,rot = 0, xlabel= new_feature)
+        plot_bar_graph(labels,totals,correct_predictions,title,rot = 0, xlabel= new_feature)
         
         #create df to store results
         accuracy = [a/b if b else 0 for a,b in zip(correct_predictions,totals)]
@@ -185,7 +192,7 @@ class Analysis:
             results = self.get_examples(cold,new_feature,results)
         
         #plot bar graph
-        self.plot_bar_graph(results[new_feature],results.Total, results["Total_Correct_Predictions"], "Predictions on Fine-Grained Annotations", rot = 0, xlabel = "Number of Annotators that Marked Instance Offesive")
+        plot_bar_graph(results[new_feature],results.Total, results["Total_Correct_Predictions"], "Predictions on Fine-Grained Annotations", rot = 0, xlabel = "Number of Annotators that Marked Instance Offesive")
         
         #combine metrics into one
         metrics_df = self.get_metrics(new_feature)
@@ -236,7 +243,7 @@ class Analysis:
         
         #plot bar graph
         title = "Predictions on Text with Full vs Partial Annotator Agreement"
-        self.plot_bar_graph(labels,totals,correct_predictions,title)
+        plot_bar_graph(labels,totals,correct_predictions,title)
         
         #create df to store results
         percents = [a/b if b else 0 for a,b in zip(correct_predictions,totals)]
@@ -314,35 +321,33 @@ class Analysis:
             results = self.get_examples(cold,new_feature,results)
         
         #plot bar chart
-        self.plot_bar_graph(results[new_feature],results.Total, results["Total_Correct_Predictions"], "Predictions on Fine-Grained Categories",rot = 45,xlabel = "Category")
+        plot_bar_graph(results[new_feature],results.Total, results["Total_Correct_Predictions"], "Predictions on Fine-Grained Categories",rot = 45,xlabel = "Category")
         
         #combine metrics into one
         metrics_df = self.get_metrics(new_feature,True)
         #results = pd.merge(results, metrics_df,how = "left", right_index = True, left_on = new_feature)
         
         return results,metrics_df
-        
     
-    
-    def plot_bar_graph(self,labels, totals, correct_predictions,title,rot = 0,xlabel=""):
-        """plots bar graph for different analyses
+    # def plot_bar_graph(self,labels, totals, correct_predictions,title,rot = 0,xlabel=""):
+    #     """plots bar graph for different analyses
 
-        Args:
-            labels (list): labels to be used for x axis
-            totals (list: number of total instances for each class
-            correct_predictions (list): number of correctly predicted instances for each class
-            title (str): title of graph
-            rot (int): rotation for x-axis ticks
-            xlabel (str): x label
-        """
-        plt.bar(labels,totals, color="red",label = "Total",edgecolor='black')
-        ax = plt.bar(labels,correct_predictions,color="blue", label ="Correct Predicitons",edgecolor='black')
-        plt.legend()
-        plt.title(title)
-        plt.xticks(ticks = labels, rotation = rot)
-        plt.xlabel(xlabel)
-        plt.ylabel("Number of Instances")
-        plt.show()
+    #     Args:
+    #         labels (list): labels to be used for x axis
+    #         totals (list: number of total instances for each class
+    #         correct_predictions (list): number of correctly predicted instances for each class
+    #         title (str): title of graph
+    #         rot (int): rotation for x-axis ticks
+    #         xlabel (str): x label
+    #     """
+    #     plt.bar(labels,totals, color="red",label = "Total",edgecolor='black')
+    #     ax = plt.bar(labels,correct_predictions,color="blue", label ="Correct Predicitons",edgecolor='black')
+    #     plt.legend()
+    #     plt.title(title)
+    #     plt.xticks(ticks = labels, rotation = rot)
+    #     plt.xlabel(xlabel)
+    #     plt.ylabel("Number of Instances")
+    #     plt.show()
         
     def get_examples(self,df,column,results, sort_list= False):
         """pull examples where model output label does not line up with true label to illustrate specific cases. Adds one text examples from each value present in the specified column to results data
