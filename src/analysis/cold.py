@@ -47,7 +47,6 @@ if __name__ == '__main__' :
     import numpy as np
 
     cold = COLD()
-    cold._load_data()
 
     dataset = cold.data()
 

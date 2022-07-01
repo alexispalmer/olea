@@ -1,40 +1,29 @@
-import os
 import numpy as np
 import pandas as pd
-import pickle
-import requests
+
 
 from src.data.dataset import Dataset
 from src.data.dso import DatasetSubmissionObject
 
+from datasets import load_dataset
+
 
 class COLD(Dataset) :
 
-    def __init__(self, dataset_save_dir: str = 'datasets') -> None:
-        super().__init__(dataset_save_dir)
+    def __init__(self, split='train') -> None:
         self.dataset_name = 'Complex and Offensive Language Dataset'
-        self.URL = 'https://raw.githubusercontent.com/alexispalmer/cold-team/dev_main/data/cold_with_hx_preds.tsv?token=GHSAT0AAAAAABRAGOZYTN4XUQA6E7AXVASKYVDQEWA'
-        self.BASEURL = os.path.basename(self.URL).split('?')[0]
+        self.URL = 'COLD-team/COLD'
         self.description = 'This is the dataset from COLD.'
-        self.dataset_path = os.path.join(self.dataset_save_dir, self.BASEURL)
         self.data_columns = ['ID', 'DataSet', 'Text']
-        self.label_columns = ['Off1', 'Off2', 'Off3']
+        self.label_columns = ['Off', 'Slur', 'Nom', 'Dist']
+        self.unique_labels = None
+        self.split = split
 
-    def _download(self) -> pd.DataFrame:
-        r = requests.get(self.URL)
-        lines = r.content.decode('utf-8').replace('\r' , '').split('\n')
-        lines = [line.split('\t') for line in lines]
+        self._data = self._load_data()
 
-        header , data = lines[0] , lines[1:]
-
-        data = [{h:d for h, d in zip(header, data_sample)} for data_sample in data ]
-        df = pd.DataFrame(data)
-
-
-        with open(self.dataset_path , 'wb') as f : 
-            pickle.dump(df, f)
-            
-        return df
+    def _load_data(self) -> pd.DataFrame:
+        print('Loading data...')
+        return load_dataset(self.URL)[self.split].to_pandas()
 
     def submit(self, dataset: pd.DataFrame, submission: iter, map: dict = None) -> DatasetSubmissionObject:
         submission_df = super().submit(dataset, submission, map)
@@ -55,7 +44,6 @@ class COLDSubmissionObject(DatasetSubmissionObject) :
             outputs = [filtered_submission[col] for col in kwargs['columns']]
             return outputs
     
-
         else : 
             return [filtered_submission['Text'] , filtered_submission['Off'] , filtered_submission['preds']]
 
@@ -63,8 +51,8 @@ class COLDSubmissionObject(DatasetSubmissionObject) :
 
 if __name__ == '__main__' : 
 
-    cold = COLD('cold')
-    cold._load_data()
+    cold = COLD()
+
 
     print('Testing Generator')
 
