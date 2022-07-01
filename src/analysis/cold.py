@@ -101,8 +101,8 @@ class COLDAnalysis(object) :
 #     from src.analysis.cold import COLDAnalysis
 #     import numpy as np
 
-#     cold = COLD()
-#     cold._load_data()
+#    cold = COLD()
+
 
 #     dataset = cold.data()
 #     dataset.drop(dataset.tail(1).index,inplace=True)
