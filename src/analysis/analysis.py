@@ -4,6 +4,8 @@ import pandas as pd
 from src.metrics.metrics import Metrics
 from src.viz.viz import plot_bar_graph, plot_histogram, histogram_values
 
+# TODO: This file is scheduled to be deleted soon. 
+
 class Analysis:
     def __init__(self,cold,show_examples):
         """Initialize analysis class
