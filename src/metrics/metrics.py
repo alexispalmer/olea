@@ -33,7 +33,7 @@ class Metrics:
         self._roc_auc = None
         self._digits = 4
         # self.__confusion_matrix = confusion_matrix(y_true, y_pred)
-        self.__classification_report = classification_report(y_true, y_pred,
+        # self.__classification_report = classification_report(y_true, y_pred,
                                                              digits = self._digits)
     @staticmethod
     def __assert_equal_length(self, y_true, y_pred) -> None:
