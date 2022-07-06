@@ -35,18 +35,21 @@ class Metrics:
         self.__confusion_matrix = confusion_matrix(y_true, y_pred)
         self.__classification_report = classification_report(y_true, y_pred,
                                                              digits = self._digits)
-
+    @staticmethod
     def __assert_equal_length(self, y_true, y_pred) -> None:
         assert (len(y_true) == len(y_pred)), "The length of the true labels is not the same as the pred labels."
-    
+
+    @staticmethod
     def __check_equal_number_of_classes(self, y_true, y_pred) -> None:
         if len(set(y_true)) != len(set(y_pred)):
             warnings.warn("WARNING: The number of classes in the true labels and the predicted labels is not the same.")
-        
+    
+    @staticmethod
     def __generate_name_to_idx_dict(self):
         self.name_to_idx = dict(enumerate(self.y_true_names))
         self.name_to_idx = dict([(value, key) for key, value in self.name_to_idx.items()])
 
+    @staticmethod
     def __prettify_confusion_matrix(self, confusion_matrix) -> str:
         """Prints out the confusion matrix with labels to console.
         Args:
@@ -59,6 +62,7 @@ class Metrics:
                                  columns = self.y_true_names).round(self._digits)
         print(pandas_cf)
 
+    @staticmethod
     def _setup_aucroc(self, y_softmax_probs: np.array):
         """A protected method to setup the auc-roc plot.
 
@@ -85,7 +89,8 @@ class Metrics:
         self._fpr = fpr
         self._tpr = tpr
         self._roc_auc = roc_auc
-        
+    
+    @staticmethod   
     def get_metrics_dictionary(self) -> dict:
         """Returns a dictionary denoting the metrics of the model. 
         It is the accessible version of classification_report()
@@ -97,16 +102,19 @@ class Metrics:
                                      digits = self._digits, 
                                      output_dict = True)
 
+    @staticmethod
     def classification_report(self) -> None:
         """Prints out the classification report to console.
         """
         print(self.__classification_report)
     
+    @staticmethod
     def confusion_matrix(self) -> None:
         """Prints out the confusion matrix to console.
         """
         self.__prettify_confusion_matrix(self.__confusion_matrix)
 
+    @staticmethod
     def norm_confusion_matrix(self, along = 'row') -> None:
         """Prints out a normalized confusion matrix to console, either normalized along the rows or columns.
 
@@ -125,6 +133,7 @@ class Metrics:
         rounded_matrix = np.around(norm_conf_mat, decimals = self._digits)
         self.__prettify_confusion_matrix(rounded_matrix)
 
+    @staticmethod
     def plot_roc_curve(self, y_softmax_probs: np.array, save = True,
                        image_filepath = os.getcwd(), 
                        image_filename = "roc_curve", 
