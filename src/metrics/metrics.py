@@ -34,7 +34,7 @@ class Metrics:
         self._digits = 4
         # self.__confusion_matrix = confusion_matrix(y_true, y_pred)
         # self.__classification_report = classification_report(y_true, y_pred,
-                                                             digits = self._digits)
+                                                             #digits = self.#_digits)
     @staticmethod
     def __assert_equal_length(self, y_true, y_pred) -> None:
         assert (len(y_true) == len(y_pred)), "The length of the true labels is not the same as the pred labels."
