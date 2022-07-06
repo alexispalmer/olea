@@ -32,7 +32,7 @@ class Metrics:
         self._tpr = None
         self._roc_auc = None
         self._digits = 4
-        self.__confusion_matrix = confusion_matrix(y_true, y_pred)
+        # self.__confusion_matrix = confusion_matrix(y_true, y_pred)
         self.__classification_report = classification_report(y_true, y_pred,
                                                              digits = self._digits)
     @staticmethod
@@ -103,16 +103,16 @@ class Metrics:
                                      output_dict = True)
 
     @staticmethod
-    def classification_report(self) -> None:
+    def classification_report(y_true, y_pred) -> None:
         """Prints out the classification report to console.
         """
-        print(self.__classification_report)
+        print(classification_report(y_true, y_pred, digits = 4))
     
     @staticmethod
-    def confusion_matrix(self) -> None:
+    def confusion_matrix(self, y_true, y_pred) -> None:
         """Prints out the confusion matrix to console.
         """
-        self.__prettify_confusion_matrix(self.__confusion_matrix)
+        self.__prettify_confusion_matrix(confusion_matrix(y_true, y_pred))
 
     @staticmethod
     def norm_confusion_matrix(self, along = 'row') -> None:
