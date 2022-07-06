@@ -60,3 +60,7 @@ def run_analysis (submission):
     results["str_len"] = Generic.str_len_analysis(submission)
 
     return results
+
+if __name__ == '__main__' : 
+    submission = get_submission("KcELECTRA")
+    results=run_analysis(submission)

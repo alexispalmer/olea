@@ -1,5 +1,5 @@
 from src.data.dso import DatasetSubmissionObject
-from src.utils.twitteraae.code.detection import get_aave_values
+from src.utils.twitteraae.code import detection 
 from src.viz.viz import plot_bar_graph
 from src.viz.viz import plot_histogram, histogram_values
 from src.utils.analysis_tools import get_metrics, get_examples
@@ -69,7 +69,7 @@ class Generic(object) :
                              total correctly predicted, and accuracy)
             metrics (df): metrics information for each category
         """ 
-        aave_values = get_aave_values(submission)
+        aave_values = detection.get_aave_values(submission)
         submission.submission["AAVE"] = aave_values
         data_at = submission.submission[submission.submission['AAVE'] >= threshold]
         data_bt = submission.submission[submission.submission['AAVE'] < threshold]
@@ -153,7 +153,7 @@ class Generic(object) :
         if show_examples:
              results = self.get_examples(submission.submission,new_feature,results, sort_list = True)
 
-        metrics = get_metrics(submission.submission, new_feature, off_col)
+        metrics = get_metrics(submission.submission,new_feature,off_col)
         
         return results,metrics
     

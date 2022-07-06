@@ -23,7 +23,7 @@ def plot_bar_graph(labels, totals, correct_predictions,
     plt.ylabel("Number of Instances")
     plt.show()
 
-def plot_histogram(hist_bins,legend_location = 'upper right', title = "", 
+def plot_histogram(hist_bins = 10,legend_location = 'upper right', title = "", 
                    xlabel = "", ylabel = "Num. of Instances", 
                    list_of_values = [], 
                    correct_preds = [],
