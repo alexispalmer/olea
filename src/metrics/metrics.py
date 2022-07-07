@@ -91,15 +91,15 @@ class Metrics:
         self._roc_auc = roc_auc
     
     @staticmethod   
-    def get_metrics_dictionary(self) -> dict:
+    def get_metrics_dictionary(y_true, y_pred) -> dict:
         """Returns a dictionary denoting the metrics of the model. 
         It is the accessible version of classification_report()
         
         Returns:
             dict: A dictionary containing the metrics of the model with respect to the classes that it predicts.
         """
-        return classification_report(self.y_true, self.y_pred, 
-                                     digits = self._digits, 
+        return classification_report(y_true, y_pred, 
+                                     digits = 4, 
                                      output_dict = True)
 
     @staticmethod

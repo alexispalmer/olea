@@ -35,12 +35,12 @@ def get_examples(df,column,results, off_col, sort_list= False):
     
     return results
     
-def get_metrics(df,off_col,column, cats_based_on_labels= False):
+def get_metrics(df, off_col, column = None, cats_based_on_labels = False):
     """Returns metrics information for each categroy specified by column if a column is specified, otherwise it returns metrics over the whole dataset
     
     Args:
         df (df): data to pull from, containing textual data
-        column (string): column name to evaluate on, can be None
+        column (string): column name to evaluate on, defaults to None. If None, metrics are calculated over the whole dataset
         off_col (string): label of ground truth column
         remove_cat_labels (boolean): if nonsensical labels would be present in results (currently just used by fine-grained category analysis for COLD)
     Returns:
@@ -48,9 +48,10 @@ def get_metrics(df,off_col,column, cats_based_on_labels= False):
     
     """
     if column == None:
-        #course metrics over entire dataset
-        my_metric = Metrics(df[off_col],df["preds"])
-        metrics_dict = my_metric.get_metrics_dictionary()
+        #coarse metrics over entire dataset
+        # my_metric = Metrics(df[off_col],df["preds"])
+        metrics_dict = Metrics.get_metrics_dictionary(y_true = df[off_col], 
+        y_pred = df["preds"])
         del metrics_dict["accuracy"]
         metrics_df = pd.DataFrame(metrics_dict)
     else:
@@ -59,8 +60,9 @@ def get_metrics(df,off_col,column, cats_based_on_labels= False):
         column_vals = np.unique(df[column])
         for value in column_vals:
             df_subset = df.loc[df[column] == value]
-            my_metric = Metrics(df_subset[off_col],df_subset["preds"])
-            m_dict = my_metric.get_metrics_dictionary()
+            # my_metric = Metrics(df_subset[off_col],df_subset["preds"])
+            m_dict = Metrics.get_metrics_dictionary(y_true = df[off_col], 
+                                                    y_pred = df["preds"])
             del m_dict["accuracy"] #remove accuracy metric, can be viewed elsewhere
             
             if cats_based_on_labels:

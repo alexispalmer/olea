@@ -4,7 +4,8 @@ from sklearn.metrics import classification_report
 
 
 from src.data.hatecheck import HateCheckSubmissionObject
-# from src.utils.analysis_tools import get_metrics, get_examples
+from src.metrics.metrics import Metrics
+from src.utils.analysis_tools import get_metrics, get_examples
 from src.data.dso import DatasetSubmissionObject
 
 class HateCheckAnalysis(object) : 
@@ -32,9 +33,9 @@ class HateCheckAnalysis(object) :
         else : 
             analysis_set = submission[submission['functionality'].isin(on)]
 
-        return classification_report(analysis_set[cls.label_column] , 
-                                    analysis_set[cls.prediction_column], 
-                                    zero_division=0)
+        return get_metrics(df = analysis_set, 
+                           off_col = cls.label_column, 
+                           column = None)
     @classmethod
     def analyze_on_derogation(cls, hatecheck_submission:HateCheckSubmissionObject) : 
         derogation_columns = ['derog_neg_emote_h', 'derog_neg_attrib_h', 'derog_dehum_h', 'derog_impl_h']
