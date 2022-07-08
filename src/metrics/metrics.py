@@ -58,11 +58,12 @@ class Metrics:
         cls.y_true_names = y_true
         cls.y_pred_names = y_pred
         cls.n_classes = len(set(y_true))
+        cls.__assert_equal_length()
+        cls.__check_equal_number_of_classes()
 
     @classmethod
     def get_name_to_idx_dict(cls, y_true, y_pred) -> dict:
         cls.set_labels(y_true, y_pred)
-        cls.__check_equal_number_of_classes()
         cls.y_true_names = list(set(cls.y_true))
         cls.y_true_names.sort()
         cls.y_pred_names = list(set(cls.y_pred))
