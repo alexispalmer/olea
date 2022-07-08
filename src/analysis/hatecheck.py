@@ -24,10 +24,26 @@ class HateCheckAnalysis(object) :
                     'spell_char_swap_h', 'spell_char_del_h', 'spell_space_del_h',
                     'spell_space_add_h', 'spell_leet_h']
 
+    categories = {'derogation' : ['derog_neg_emote_h', 'derog_neg_attrib_h', 'derog_dehum_h', 'derog_impl_h'], 
+                'threats' : ['threat_dir_h', 'threat_norm_h'],
+                'slurs':['slur_h', 'slur_homonym_nh', 'slur_reclaimed_nh'],
+                'profanity' : ['profanity_h', 'profanity_nh'], 
+                'pronoun_references':['ref_subs_clause_h','ref_subs_sent_h'], 
+                'negation':['negate_pos_h', 'negate_neg_nh'], 
+                'phrasing' : ['phrase_question_h','phrase_opinion_h'], 
+                'identity' : ['ident_neutral_nh', 'ident_pos_nh'],
+                'counter' : ['counter_quote_nh','counter_ref_nh'],
+                'nonhateful-abuse' : ['target_obj_nh', 'target_indiv_nh', 'target_group_nh'],
+                'hateful-abuse' : ['spell_char_swap_h', 'spell_char_del_h', 'spell_space_del_h',
+                                'spell_space_add_h', 'spell_leet_h']
+                }
+
     @classmethod
     def _run_analysis_on_functionality(cls, submission:HateCheckSubmissionObject, on:Union[str,List[str]]) :
         
-        if type(on) == str : 
+        if on in cls.categories : 
+            analysis_set = submission[submission['functionality'].isin(cls.categories[on])]
+        elif type(on) == str : 
             analysis_set = submission[submission['functionality'] == on]
         else : 
             analysis_set = submission[submission['functionality'].isin(on)]
@@ -36,74 +52,14 @@ class HateCheckAnalysis(object) :
                                     analysis_set[cls.prediction_column], 
                                     zero_division=0)
     @classmethod
-    def analyze_on_derogation(cls, hatecheck_submission:HateCheckSubmissionObject) : 
-        derogation_columns = ['derog_neg_emote_h', 'derog_neg_attrib_h', 'derog_dehum_h', 'derog_impl_h']
-        return cls._run_analysis_on_functionality(submission=hatecheck_submission.submission, on=derogation_columns)
+    def analyze_on(cls, hatecheck_submission:HateCheckSubmissionObject, on:Union[str, List[str]]) : 
+        return cls._run_analysis_on_functionality(submission=hatecheck_submission.submission, on=on)
 
     @classmethod
-    def analyze_on_threats(cls, hatecheck_submission:HateCheckSubmissionObject) : 
-        threat_columns = ['threat_dir_h', 'threat_norm_h']
-        return cls._run_analysis_on_functionality(submission=hatecheck_submission.submission, on=threat_columns)
-
-    @classmethod
-    def analyze_on_slurs(cls, hatecheck_submission:HateCheckSubmissionObject) : 
-        slur_columns = ['slur_h', 'slur_homonym_nh', 'slur_reclaimed_nh']
-        return cls._run_analysis_on_functionality(submission=hatecheck_submission.submission, on=slur_columns)
-
-    @classmethod
-    def analyze_on_profanity(cls, hatecheck_submission:HateCheckSubmissionObject) : 
-        profanity_columns = ['profanity_h', 'profanity_nh']
-        return cls._run_analysis_on_functionality(submission=hatecheck_submission.submission, on=profanity_columns)
-
-    @classmethod
-    def analyze_on_pronoun_reference(cls, hatecheck_submission:HateCheckSubmissionObject) : 
-        pronoun_reference_columns = ['ref_subs_clause_h','ref_subs_sent_h']
-        return cls._run_analysis_on_functionality(submission=hatecheck_submission.submission, on=pronoun_reference_columns)
-
-    @classmethod
-    def analyze_on_negation(cls, hatecheck_submission:HateCheckSubmissionObject) : 
-        negation_columns = ['ref_subs_clause_h','ref_subs_sent_h']
-        return cls._run_analysis_on_functionality(submission=hatecheck_submission.submission, on=negation_columns)
-
-    @classmethod
-    def analyze_on_phrasing(cls, hatecheck_submission:HateCheckSubmissionObject) : 
-        phrasing_columns = ['phrase_question_h','phrase_opinion_h']
-        return cls._run_analysis_on_functionality(submission=hatecheck_submission.submission, on=phrasing_columns)
-
-    @classmethod 
-    def analyze_on_non_hate(cls, hatecheck_submission:HateCheckSubmissionObject) : 
-        non_hate_columns = ['ident_neutral_nh', 'ident_pos_nh']
-        return cls._run_analysis_on_functionality(submission=hatecheck_submission.submission, on=non_hate_columns)
-
-    @classmethod 
-    def analyze_on_counter_speech(cls, hatecheck_submission:HateCheckSubmissionObject) : 
-        counter_columns = ['counter_quote_nh','counter_ref_nh']
-        return cls._run_analysis_on_functionality(submission=hatecheck_submission.submission, 
-                                                on=counter_columns)
-
-    @classmethod 
-    def analyze_on_acceptable_abuse(cls, hatecheck_submission:HateCheckSubmissionObject) : 
-        acceptable_abuse_columns = ['target_obj_nh', 'target_indiv_nh', 'target_group_nh']
-        return cls._run_analysis_on_functionality(submission=hatecheck_submission.submission, 
-                                                on=acceptable_abuse_columns)
-
-    @classmethod 
-    def analyze_on_hateful_abuse(cls, hatecheck_submission:HateCheckSubmissionObject) : 
-        hateful_abuse_columns = ['spell_char_swap_h', 'spell_char_del_h', 'spell_space_del_h',
-                                'spell_space_add_h', 'spell_leet_h']
-        return cls._run_analysis_on_functionality(submission=hatecheck_submission.submission, 
-                                                on=hateful_abuse_columns)
+    def analyze_on_all(cls, hatecheck_submission:HateCheckSubmissionObject) :
+        return cls._run_analysis_on_functionality(submission=hatecheck_submission.submission, on=cls.functionalities)
 
 
-    @classmethod
-    def analyze_on_all_functionalities(cls, hatecheck_submission:HateCheckSubmissionObject) : 
-        return cls._run_analysis_on_functionality(submission=hatecheck_submission.submission, 
-                                                on=cls.functionalities)
-
-
-
-
-        
 if __name__ == '__main__' : 
 
     import pandas as pd
@@ -120,13 +76,13 @@ if __name__ == '__main__' :
     hcso = hc.submit(hc_data, mock_preds, map)
 
     print('Analysis on acceptable abuse...')
-    print(HateCheckAnalysis.analyze_on_acceptable_abuse(hcso))
+    print(HateCheckAnalysis.analyze_on(hcso, 'nonhateful-abuse'))
 
     print('Analysis on hateful abuse...')
-    print(HateCheckAnalysis.analyze_on_hateful_abuse(hcso))
+    print(HateCheckAnalysis.analyze_on(hcso, 'hateful-abuse'))
 
     print('Analysis on negation...')
-    print(HateCheckAnalysis.analyze_on_negation(hcso))
+    print(HateCheckAnalysis.analyze_on(hcso, 'negation'))
 
     print('Analysis on all functionalities...')
     print(HateCheckAnalysis.analyze_on_all_functionalities(hcso))
