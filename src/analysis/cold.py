@@ -97,15 +97,19 @@ class COLDAnalysis(object) :
 
 # if __name__ == '__main__' : 
 
-#     from src.data.cold import COLD, COLDSubmissionObject
-#     from src.analysis.cold import COLDAnalysis
-#     import numpy as np
+    # from src.data.cold import COLD, COLDSubmissionObject
+    # from src.analysis.cold import COLDAnalysis
+    # import numpy as np
+    # from src.utils.preprocess_text import PreprocessText as pt
 
-#    cold = COLD()
+    # cold = COLD()
 
 
-#     dataset = cold.data()
-#     dataset.drop(dataset.tail(1).index,inplace=True)
+    # dataset = cold.data()
+    # dataset.drop(dataset.tail(1).index,inplace=True)
+    # messages = list(dataset['Text'])
+    # pre = pt.execute(messages)
+    # dataset['pre'] = pre
 
 #     num_preds = dataset.shape[0]
 #     yn_preds = np.random.choice(['Y' , 'N'], size=num_preds)

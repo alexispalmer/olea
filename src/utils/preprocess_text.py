@@ -9,11 +9,11 @@ from emoji import demojize
 import wordsegment as ws
 
 class PreprocessText:
-    def __init__(self):
-        self.messages = None
+    messages  = []
 
     # Preprocessing function
-    def preprocess_text(self, messages: list) -> list:
+    @classmethod
+    def execute(cls, messages: list) -> list:
         """Function to preprocess the messages in COLD according to the
         paper.
 
@@ -25,49 +25,54 @@ class PreprocessText:
             list: The preprocessed messages as a list. 
         """
         # This is a pipelined process
-        self.messages = messages
+        # 1. Lowercase all text, clean unicode characters
+        # 2. Replace links with HTML and usernames with USER
+        # 3. Segment hashtags into component words
+        # 4. Replace emojis with word descriptions
+        # 5. Limit consecutive USER mentions to 3 and final cleanup.
 
-        # Convert html codes to emoji and then emoji to their names
-        preprocess = [html.unescape(x) for x in self.messages]
-        preprocess = [demojize(x, delimiters = (" ", " ")) for x in preprocess]
+        cls.messages = messages
 
-        # Replace some characters that typically cause issues in other data formats
+        # 1. Lowercase all text & clearn unicode characters
+        preprocess = [x.lower() for x in cls.messages]
+        preprocess = [html.unescape(x) for x in preprocess]
+        # Replace some characters that can cause issues in other data formats
         # These are typically HTML codes that map to a specific character
-        # Left double quote to regular double quote
+        
+        # Left double quote to regular double quote:
         preprocess = [x.replace("&#8220;", "\"") for x in preprocess]
         preprocess = [x.replace("“", "\"") for x in preprocess]
-        # Right double quote to regular double quote
+        # Right double quote to regular double quote:
         preprocess = [x.replace("&#8221;", "\"") for x in preprocess]
         preprocess = [x.replace("”", "\"") for x in preprocess]
-        # Left single quote to regular single quote
+        # Left single quote to regular single quote:
         preprocess = [x.replace("&#8216;", "\'") for x in preprocess]
         preprocess = [x.replace("‘", "\'") for x in preprocess]
-        # Right single quote to regular single quote 
+        # Right single quote to regular single quote:
         preprocess = [x.replace("&#8217;", "\'") for x in preprocess]
         preprocess = [x.replace("â€¦", "\'") for x in preprocess]
         preprocess = [x.replace("â€™", "\'") for x in preprocess]
         preprocess = [x.replace("’", "\'") for x in preprocess]
-        # Ellipses … to triple dot
+        # Ellipses … to triple dot:
         preprocess = [x.replace("&#8230;", "...") for x in preprocess]
         preprocess = [x.replace("…", "...") for x in preprocess]
+
+        # 2. Replace links with HTML and usernames with USER
         # Regex is used to find URLs and USER handles
-        preprocess = [re.sub(r"\S*https?:\S*", " ::HTML:: ", x) 
+        preprocess = [re.sub(r"\S*https?:\S*", " HTML ", x) 
                       for x in preprocess]
-        preprocess = [re.sub(r"(RT )?@\S*", " ::USER:: ", x) for x in preprocess]
+        preprocess = [re.sub(r"(rt )?@\S*", " USER ", x) for x in preprocess]
 
-        # Replace _ with a space so that each emoji is converted to its textual
-        # tokens. (This is done here to prevent usernames with underscores from
-        # earlier in the preprocessing being wrongly replaced)
-        preprocess = [x.replace("_", " ") for x in preprocess]
+        # 3. Segment hashtags into component words
+        preprocess = cls.__clean_hashtags(preprocess)
 
-        # Next, find hashtags and segment them into their words.
-        preprocess = self.__clean_hashtags(preprocess)
+        # 4. Replace emojis with word descriptions
+        preprocess = [demojize(x, delimiters = (" ", " ")) for x in preprocess]
 
-        # Replacing the html and user tokens from earlier to begin and end with 
-        # dunder so that any text tokenization (likely) keeps it together as a
-        # single token.
-        preprocess = [x.replace("::USER::", "__USER__") for x in preprocess]
-        preprocess = [x.replace("::HTML::", "__HTML__") for x in preprocess]
+        # 5. Limit consecutive USER mentions to 3
+        preprocess = [re.sub(r'(USER ){4,}', 
+                        'USER USER USER ', x) 
+                        for x in preprocess]
 
         # Some messages have </s><s> in them.  Removing them
         # Note from AP, DS: This might represent sarcasm in text.  
@@ -78,17 +83,15 @@ class PreprocessText:
         preprocess = [re.sub(' {2,}', ' ', x) for x in preprocess]
         preprocess = [re.sub(r'^\s+', "", x) for x in preprocess]
 
-        # "Limit consecutive __USER__ mentions to 3"
-        preprocess = [re.sub(r'(__USER__ ){4,}', 
-                        '__USER__ __USER__ __USER__ ', x) 
-                        for x in preprocess]
-        
-        # Finally lowercase the messages
-        preprocessed = [x.lower() for x in preprocess]
+        # Replace _ with a space so that each emoji is converted to its textual
+        # tokens. (This is done here to prevent usernames with underscores from
+        # earlier in the preprocessing from being wrongly replaced)
+        preprocess = [x.replace("_", " ") for x in preprocess]
 
-        return preprocessed
+        return preprocess
 
-    def __clean_hashtags(self, messages: list) -> list:
+    @classmethod
+    def __clean_hashtags(cls, messages: list) -> list:
         """Private helper function to preprocess the messages in COLD 
         which contain a hashtag.
 
