@@ -35,7 +35,9 @@ def get_examples(df,column,results, off_col, sort_list= False):
     
     return results
     
+
 def get_metrics(df, off_col, column = None, cats_based_on_labels = False):
+
     """Returns metrics information for each categroy specified by column if a column is specified, otherwise it returns metrics over the whole dataset
     
     Args:
@@ -69,7 +71,7 @@ def get_metrics(df, off_col, column = None, cats_based_on_labels = False):
                 m_dict = __remove_nonsensical_labels(m_dict, df_subset,off_col,np.unique(df[off_col]))
             metrics_dict[value] = m_dict
     
-            metrics_df = __generate_metrics_df(metrics_dict,column)
+        metrics_df = __generate_metrics_df(metrics_dict,column)
     #return df for dataframe version
     return metrics_df
 
@@ -85,7 +87,7 @@ def __generate_metrics_df(metrics_dict,column):
     """
     #Double index version
     reformed_dict = {}
-    for outerKey, innerDict in metrics_dict.items():
+    for outerKey, innerDict in list(metrics_dict.items()):
         for innerKey, values in innerDict.items():
             reformed_dict[(outerKey, innerKey)] = values
     

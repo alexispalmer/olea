@@ -41,7 +41,7 @@ class COLDAnalysis(object) :
 
 
     @staticmethod
-    def categorical_analysis(cold_submission:DatasetSubmissionObject, category:str,plot=True,show_examples = False,off_col = "Off",cats_based_on_labels = False) : 
+    def categorical_analysis(cold_submission:DatasetSubmissionObject, category:str,plot=True,show_examples = False,off_col = "Off",cats_based_on_labels =True) : 
         """check how model predicts on different labels of specific category already in the df
 
         Args:
