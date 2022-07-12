@@ -1,11 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Jun 24 11:00:52 2022
-
-@author: mgrace31
-"""
-
-'Testing different HuggigFace models on the datasets'
+'Testing different HuggingFace models on the datasets'
 
 from src.data.cold import COLD, COLDSubmissionObject
 from src.analysis.cold import COLDAnalysis

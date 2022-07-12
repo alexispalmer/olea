@@ -1,6 +1,4 @@
-import numpy as np
 import pandas as pd
-
 
 from src.data.dataset import Dataset
 from src.data.dso import DatasetSubmissionObject

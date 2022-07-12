@@ -2,7 +2,6 @@ from re import T
 import string
 import random
 import pandas as pd 
-import pickle
 
 keys = "ID	DataSet	Text	Off1	Off2	Off3	Slur1	Slur2	Slur3	Nom1	Nom2	Nom3	Dist1	Dist2	Dist3"
 

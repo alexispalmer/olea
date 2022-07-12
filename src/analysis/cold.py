@@ -1,7 +1,6 @@
 from src.data.dso import DatasetSubmissionObject
-from src.metrics.metrics import Metrics 
 from src.utils.analysis_tools import get_metrics, get_examples
-from src.utils.analysis_tools import get_plotting_info_create_col, get_plotting_info_from_col
+from src.utils.analysis_tools import get_plotting_info_from_col
 from src.viz.viz import plot_bar_graph
 import numpy as np
 

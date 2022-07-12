@@ -1,10 +1,7 @@
 from typing import List, Union
 import numpy as np
-from sklearn.metrics import classification_report
-
 
 from src.data.hatecheck import HateCheckSubmissionObject
-from src.metrics.metrics import Metrics
 from src.utils.analysis_tools import get_metrics, get_examples
 from src.data.dso import DatasetSubmissionObject
 

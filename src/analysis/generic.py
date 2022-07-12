@@ -3,7 +3,7 @@ from src.utils.twitteraae.code import detection
 from src.viz.viz import plot_bar_graph
 from src.viz.viz import plot_histogram, histogram_values
 from src.utils.analysis_tools import get_metrics, get_examples
-from src.utils.analysis_tools import get_plotting_info_from_col, get_plotting_info_create_col
+from src.utils.analysis_tools import get_plotting_info_create_col
 import pandas as pd
 import numpy as np
 
