@@ -89,7 +89,7 @@ class PreprocessText:
         # earlier in the preprocessing from being wrongly replaced)
         preprocess = [x.replace("_", " ") for x in preprocess]
 
-        # Strip training whitespace
+        # Strip trailing whitespace
         preprocess = [x.strip() for x in preprocess]
 
         return preprocess
