@@ -1,7 +1,4 @@
-# A helper function to preprocess the data in COLD
-# Requires that emoji and wordsegment be installed
-# pip install emoji
-# pip install wordsegment
+# A helper function to preprocess text data
 
 import re
 import html
