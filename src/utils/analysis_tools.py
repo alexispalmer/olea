@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Jun 28 09:49:49 2022
-
-@author: mcg19
-"""
-
 from src.metrics.metrics import Metrics
 import numpy as np
 import pandas as pd

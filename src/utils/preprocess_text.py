@@ -69,7 +69,12 @@ class PreprocessText:
         # 4. Replace emojis with word descriptions
         preprocess = [demojize(x, delimiters = (" ", " ")) for x in preprocess]
 
+
         # 5. Limit consecutive USER mentions to 3
+        # Trim redundant spaces
+        preprocess = [re.sub(' {2,}', ' ', x) for x in preprocess]
+        preprocess = [re.sub(r'^\s+', "", x) for x in preprocess]
+
         preprocess = [re.sub(r'(USER ){4,}', 
                         'USER USER USER ', x) 
                         for x in preprocess]
@@ -79,14 +84,13 @@ class PreprocessText:
         preprocess = [x.replace("</s><s>", " ") for x in preprocess]
         preprocess = [x.replace("</s> <s>", " ") for x in preprocess]
 
-        # Trim redundant spaces
-        preprocess = [re.sub(' {2,}', ' ', x) for x in preprocess]
-        preprocess = [re.sub(r'^\s+', "", x) for x in preprocess]
-
         # Replace _ with a space so that each emoji is converted to its textual
         # tokens. (This is done here to prevent usernames with underscores from
         # earlier in the preprocessing from being wrongly replaced)
         preprocess = [x.replace("_", " ") for x in preprocess]
+
+        # Strip training whitespace
+        preprocess = [x.strip() for x in preprocess]
 
         return preprocess
 
