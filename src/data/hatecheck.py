@@ -34,6 +34,12 @@ class HateCheck(Dataset) :
 
 class HateCheckSubmissionObject(DatasetSubmissionObject) : 
 
+    label_column = 'label_gold'
+    prediction_column = 'preds'
+    text_column = 'test_case'
+    data_columns = ['functionality', 'case_id' , 'test_case' , 'direction' , 
+                    'focus_words' , 'focus_lemma']
+
     def __init__(self, submission_df: pd.DataFrame):
         super().__init__(submission_df)
 
@@ -48,8 +54,7 @@ class HateCheckSubmissionObject(DatasetSubmissionObject) :
             return outputs
     
         else : 
-            return [filtered_submission[['functionality', 'case_id' , 'test_case' , 'direction' , 
-                            'focus_words' , 'focus_lemma' , 'preds']]]
+            return filtered_submission[self.data_columns]
         
 
 
