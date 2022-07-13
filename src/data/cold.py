@@ -27,6 +27,11 @@ class COLD(Dataset) :
 
 
 class COLDSubmissionObject(DatasetSubmissionObject) : 
+
+    label_column = 'Off'
+    prediction_column = 'preds'
+    text_column = 'Text'
+    data_columns = ['Text' , 'Off' , 'Nom' , 'Slur' , 'Dist']
     
     def __init__(self, submission_df: pd.DataFrame):
         super().__init__(submission_df)
