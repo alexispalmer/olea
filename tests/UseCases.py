@@ -23,9 +23,6 @@ MODELS = {"HateXplain": {"link" : "Hate-speech-CNERG/bert-base-uncased-hatexplai
 def get_submission (model_name: str):
     #Load in COLD [IMPORTANT TO DROP FINAL ROW (IT"S NAN)]
     cold = COLD()
-    cold._load_data()
-    dataset = cold.data()
-    dataset.drop(dataset.tail(1).index,inplace=True)
     
     if model_name == "Random":
         num_preds = dataset.shape[0]
@@ -40,7 +37,7 @@ def get_submission (model_name: str):
         preds = predicted.label
 
     #create submission object
-    submission = cold.submit(dataset, preds, map=MODELS[model_name]["map"])
+    submission = cold.submit(cold.data(), preds, map=MODELS[model_name]["map"])
     return submission
 
 def run_analysis (submission):

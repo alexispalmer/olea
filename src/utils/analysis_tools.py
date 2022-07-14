@@ -42,7 +42,7 @@ def get_metrics(df, off_col, column = None, cats_based_on_labels = False):
         df: metrics information
     
     """
-    if column == None:
+    if column == off_col:
         #coarse metrics over entire dataset
         # my_metric = Metrics(df[off_col],df["preds"])
         metrics_dict = Metrics.get_metrics_dictionary(y_true = df[off_col], 
