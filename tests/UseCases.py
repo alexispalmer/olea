@@ -23,6 +23,7 @@ MODELS = {"HateXplain": {"link" : "Hate-speech-CNERG/bert-base-uncased-hatexplai
 def get_submission (model_name: str):
     #Load in COLD [IMPORTANT TO DROP FINAL ROW (IT"S NAN)]
     cold = COLD()
+    dataset = cold._data
     
     if model_name == "Random":
         num_preds = dataset.shape[0]
@@ -42,9 +43,9 @@ def get_submission (model_name: str):
 
 def run_analysis (submission):
     results = {}
-    results["cold_cat"] = COLDAnalysis.categorical_analysis(submission, category='Cat')
+    results["cold_cat"] = COLDAnalysis.analyze_on(submission,'Cat')
     results["anno_agree"] = Generic.check_anno_agreement(submission, ["Off1","Off2","Off3"],off_col="Off",show_examples = True)
-    results["coarse"] = COLDAnalysis.coarse_analysis(submission)
+    results["coarse"] = COLDAnalysis.analyze_on(submission, 'Off')
     results["aave"] = Generic.aave(submission)
     results["#"] = Generic.check_substring("#",submission)
     results["str_len"] = Generic.str_len_analysis(submission)
@@ -52,5 +53,5 @@ def run_analysis (submission):
     return results
 
 if __name__ == '__main__' : 
-    submission = get_submission("KcELECTRA")
+    submission = get_submission("HateXplain")
     results=run_analysis(submission)

@@ -171,6 +171,11 @@ def get_plotting_info_from_col(df, feature, off_col):
     totals = df[feature].value_counts()
     correct_predictions_n = correct_preds[feature].value_counts()
     
+    total_df = pd.concat([totals,correct_predictions_n],axis=1)
+    totals = total_df.iloc[:,0]
+    correct_predictions_n = total_df.iloc[:,1]
+
+    
     Accuracy = correct_preds[feature].value_counts()/df[feature].value_counts()
     results = pd.DataFrame({"Total":totals, "Total_Correct_Predictions": correct_predictions_n, "Accuracy": Accuracy})
     results = results.reset_index()

@@ -11,7 +11,7 @@ from src.utils import preprocess_text
 def get_aave_values(submission):
     predict.load_model()
     pt = preprocess_text.PreprocessText()
-    processed_text = pt.preprocess_text(submission.submission.Text)
+    processed_text = pt.execute(submission.submission.Text)
     aae = []
     for i in range(len(processed_text)):
         preds = predict.predict((processed_text[i].split()))
