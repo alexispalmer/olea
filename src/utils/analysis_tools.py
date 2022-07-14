@@ -29,7 +29,7 @@ def get_examples(df,column,results, off_col, sort_list= False):
     return results
     
 
-def get_metrics(df, off_col, column = None, cats_based_on_labels = False):
+def get_metrics(df, off_col, column, cats_based_on_labels = False):
 
     """Returns metrics information for each categroy specified by column if a column is specified, otherwise it returns metrics over the whole dataset
     

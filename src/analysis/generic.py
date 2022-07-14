@@ -45,7 +45,7 @@ class Generic(object) :
             results = get_examples(full_df,new_feature,results,off_col=off_col,sort_list = False)
         
         #get_metrics
-        metrics = get_metrics(full_df, new_feature,off_col)
+        metrics = get_metrics(full_df, off_col,new_feature,)
         
         return results, metrics
 
@@ -90,7 +90,7 @@ class Generic(object) :
             results = get_examples(full_df,new_feature,results,off_col,sort_list = False)
         
         #get_metrics
-        metrics = get_metrics(full_df, new_feature,off_col)
+        metrics = get_metrics(full_df,off_col,new_feature)
         
         return results, metrics
                 
@@ -153,7 +153,7 @@ class Generic(object) :
         if show_examples:
              results = self.get_examples(submission.submission,new_feature,results, sort_list = True)
 
-        metrics = get_metrics(submission.submission,new_feature,off_col)
+        metrics = get_metrics(submission.submission,off_col,new_feature)
         
         return results,metrics
     
@@ -206,5 +206,5 @@ class Generic(object) :
             results = get_examples(full_df,new_feature,results,off_col=off_col,sort_list = False)
         
         #get_metrics
-        metrics = get_metrics(full_df, new_feature, off_col)
+        metrics = get_metrics(full_df, off_col,new_feature)
         return results, metrics
