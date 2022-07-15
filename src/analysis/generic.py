@@ -1,16 +1,51 @@
 from src.data.dso import DatasetSubmissionObject
 from src.utils.twitteraae.code import detection 
+from typing import Union, List
 from src.viz.viz import plot_bar_graph
 from src.viz.viz import plot_histogram, histogram_values
 from src.utils.analysis_tools import get_metrics, get_examples
-from src.utils.analysis_tools import get_plotting_info_create_col
+from src.utils.analysis_tools import get_plotting_info_create_col,get_plotting_info_from_col
 import pandas as pd
 import numpy as np
 
 class Generic(object) : 
+    
+    @classmethod
+    def _run_analysis_on(cls, submission:DatasetSubmissionObject, 
+                        on:Union[str, List[str]], 
+                        target_column:str,plot, show_examples) : 
 
-    @staticmethod
-    def check_substring(substring:str, submission:DatasetSubmissionObject,plot=True,show_examples=False,off_col ="Off"):
+         #labels = np.unique(submission.submission[on])
+         totals, correct_predictions_n, results = get_plotting_info_from_col(submission.submission, feature = on, off_col = submission.label_column)
+          
+          # plot the bar graph
+         if plot:
+             plot_bar_graph(totals.index, totals, correct_predictions_n, 
+                              title = str("Predictions on " + on))
+          #get examples
+         if show_examples:
+             results = get_examples(submission.submission, on, results, submission.label_column)
+          
+         metrics = get_metrics(submission.submission, submission.label_column, on)    
+         
+         return results, metrics
+
+    @classmethod
+    def analyze_on(cls, submission:DatasetSubmissionObject, 
+                    features:Union[str, List[str]],plot,show_examples): 
+
+        return cls._run_analysis_on(submission, 
+                                    features, 
+                                    submission.label_column, 
+                                    plot,
+                                    show_examples)
+
+    @classmethod
+    def check_substring(cls,substring:str,
+                        submission:DatasetSubmissionObject,
+                        plot=True,
+                        show_examples=False,
+                        ):
         """check how model predicts on instances containing a specific substring vs without that substring.
 
         Args:
@@ -26,32 +61,45 @@ class Generic(object) :
             metrics (df): metrics information for each category
         """ 
         #find instances of substring/ vs no substring
-        ss = submission.submission[submission.submission['Text'].str.contains(substring)]
-        no_ss = submission.submission[~submission.submission['Text'].str.contains(substring)]
+        df1 = submission.submission[submission.submission['Text'].str.contains(substring)]
+        df2 = submission.submission[~submission.submission['Text'].str.contains(substring)]
         
-        #create labels
+        #create new column
         new_feature = ''.join(["Contains ", '\'',substring, '\''])
         labels = ["Y","N"]
+        df1[new_feature] = labels[0]
+        df2[new_feature] = labels[1]
+        submission.submission = df1.merge(df2,"outer")
+
+        #run analysis
+        return cls._run_analysis_on(submission, 
+                                    new_feature, 
+                                    submission.label_column, 
+                                    plot,
+                                    show_examples)
+        # totals, correct_predictions_n,results= get_plotting_info_from_col(full_df, new_feature, off_col)
         
-        totals,correct_predictions_n, results, full_df= get_plotting_info_create_col(
-            ss,no_ss, new_feature,off_col)
         
         # plot the bar graph
-        if plot:
-            plot_bar_graph(labels, totals, correct_predictions_n, 
-                            title = "Predictions on Text with " + new_feature)
-        #get examples
-        if show_examples == True:
-            results = get_examples(full_df,new_feature,results,off_col=off_col,sort_list = False)
+        # if plot:
+        #     plot_bar_graph(labels, totals, correct_predictions_n, 
+        #                     title = "Predictions on Text with " + new_feature)
+        # #get examples
+        # if show_examples == True:
+        #     results = get_examples(full_df,new_feature,results,off_col=off_col,sort_list = False)
         
-        #get_metrics
-        metrics = get_metrics(full_df, off_col,new_feature,)
+        # #get_metrics
+        # metrics = get_metrics(full_df, off_col,new_feature,)
         
-        return results, metrics
+        # return results, metrics
 
 
-    @staticmethod
-    def aave(submission:DatasetSubmissionObject, threshold:float = 0.5,plot=True,show_examples=False,off_col ="Off"):
+    @classmethod
+    def aave(cls,submission:DatasetSubmissionObject,
+             threshold:float = 0.5,
+             plot=True,
+             show_examples=False,
+             ):
         """Check how model predicts on instances that are written using African American Vernacular English. The scores 
             are calculated using the TwitterAAE model created by (Blodgett et. al 2016). Further information can be found at
             http://slanglab.cs.umass.edu/TwitterAAE/. These scores represent an inference of the *proportion* of words in the 
@@ -69,34 +117,50 @@ class Generic(object) :
                              total correctly predicted, and accuracy)
             metrics (df): metrics information for each category
         """ 
+        #get aave values
         aave_values = detection.get_aave_values(submission)
         submission.submission["AAVE"] = aave_values
-        data_at = submission.submission[submission.submission['AAVE'] >= threshold]
-        data_bt = submission.submission[submission.submission['AAVE'] < threshold]
+        df1 = submission.submission[submission.submission['AAVE'] >= threshold]
+        df2 = submission.submission[submission.submission['AAVE'] < threshold]
         
-        #create labels
-        new_feature = "AAVE-thresh of " + str(threshold) #Add in new feature with labels for metrics
-        labels = ["x >= threshold", "x < threshold"]
+        #create new column
+        new_feature = "AAVE-thresh >= " + str(threshold) #Add in new feature with labels for metrics
+        labels = ["Y", "N"]
+        df1[new_feature] = labels[0]
+        df2[new_feature] = labels[1]
+        submission.submission = df1.merge(df2,"outer")
         
-        totals,correct_predictions_n, results, full_df= get_plotting_info_create_col(
-            data_at,data_bt, new_feature,off_col)
+       
+        return cls._run_analysis_on(submission, 
+                                    new_feature, 
+                                    submission.label_column, 
+                                    plot,
+                                    show_examples)
+        
+        
+        # totals,correct_predictions_n, results, full_df= get_plotting_info_create_col(
+        #     data_at,data_bt, new_feature,off_col)
 
-        # plot the bar graph
-        if plot:
-            plot_bar_graph(labels, totals, correct_predictions_n, 
-                            title = "Predictions on Text with " + new_feature)
-        #get examples
-        if show_examples == True:
-            results = get_examples(full_df,new_feature,results,off_col,sort_list = False)
+        # # plot the bar graph
+        # if plot:
+        #     plot_bar_graph(labels, totals, correct_predictions_n, 
+        #                     title = "Predictions on Text with " + new_feature)
+        # #get examples
+        # if show_examples == True:
+        #     results = get_examples(full_df,new_feature,results,off_col,sort_list = False)
         
-        #get_metrics
-        metrics = get_metrics(full_df,off_col,new_feature)
+        # #get_metrics
+        # metrics = get_metrics(full_df,off_col,new_feature)
         
-        return results, metrics
+        # return results, metrics
                 
 
     @staticmethod
-    def str_len_analysis(submission:DatasetSubmissionObject,hist_bins = 10, plot=True,show_examples=False, off_col = "Off"):
+    def str_len_analysis(submission:DatasetSubmissionObject,
+                         hist_bins = 10,
+                         plot=True,
+                         show_examples=False,
+                         ):
         """Analyze and plot how the model performs on instances of different lengths using a histogram.
 
         Args:
@@ -157,10 +221,9 @@ class Generic(object) :
         
         return results,metrics
     
-    @staticmethod
-    def check_anno_agreement(submission: DatasetSubmissionObject, 
+    @classmethod
+    def check_anno_agreement(cls,submission: DatasetSubmissionObject, 
                              anno_columns: list,
-                             off_col: str,
                              plot = True, show_examples=False) -> pd.DataFrame:
         """This calculates the annotator agreement of the dataset.
 
@@ -187,24 +250,68 @@ class Generic(object) :
 
         """
         #full agreement is considered the "easy case"
-        full_agree = submission.submission[submission.submission[anno_columns].eq(submission.submission[anno_columns].iloc[:, 0], axis=0).all(axis=1)]
+        df1 = submission.submission[submission.submission[anno_columns].eq(submission.submission[anno_columns].iloc[:, 0], axis=0).all(axis=1)]
         #not full agreement is considered the more difficult case"
-        partial_agree = submission.submission[~submission.submission.loc[:].isin(full_agree.loc[:])].dropna()
-       
+        df2 = submission.submission[~submission.submission.loc[:].isin(df1.loc[:])].dropna()
+        
+        
+        #create new column
         new_feature = "Full Agreement vs Partial Agreement"
         labels = ["Full", "Partial"]
+        df1[new_feature] = labels[0]
+        df2[new_feature] = labels[1]
+        submission.submission = df1.merge(df2,"outer")
         
-        totals,correct_predictions_n, results, full_df= get_plotting_info_create_col(
-            full_agree,partial_agree, new_feature,off_col)
+       
+        return cls._run_analysis_on(submission, 
+                                    new_feature, 
+                                    submission.label_column, 
+                                    plot,
+                                    show_examples)
         
-        # plot the bar graph
-        if plot:
-            plot_bar_graph(labels, totals, correct_predictions_n, 
-                            title = "Predictions on Text with" + new_feature) 
-        #get examples
-        if show_examples == True:
-            results = get_examples(full_df,new_feature,results,off_col=off_col,sort_list = False)
+        # totals,correct_predictions_n, results, full_df= get_plotting_info_create_col(
+        #     full_agree,partial_agree, new_feature,off_col)
+        
+        # # plot the bar graph
+        # if plot:
+        #     plot_bar_graph(labels, totals, correct_predictions_n, 
+        #                     title = "Predictions on Text with" + new_feature) 
+        # #get examples
+        # if show_examples == True:
+        #     results = get_examples(full_df,new_feature,results,off_col=off_col,sort_list = False)
         
         #get_metrics
-        metrics = get_metrics(full_df, off_col,new_feature)
-        return results, metrics
+        # metrics = get_metrics(full_df, off_col,new_feature)
+        # return results, metrics
+    
+    
+if __name__ == '__main__' : 
+
+    from src.data.cold import COLD, COLDSubmissionObject
+    from src.analysis.generic import Generic
+    import numpy as np
+    from src.utils.preprocess_text import PreprocessText as pt
+
+    cold = COLD()
+    dataset = cold.data()
+    messages = list(dataset['Text'])
+    pre = pt.execute(messages)
+    dataset['pre'] = pre
+
+    num_preds = dataset.shape[0]
+    yn_preds = np.random.choice(['Y' , 'N'], size=num_preds)
+    bool_preds = np.random.choice([True, False], size=num_preds)
+
+    map = {True : 'Y' , False:'N'}
+
+    print('Yes-No Preds')
+
+    submission = cold.submit(dataset, bool_preds, map=map)
+
+    coarse_results = Generic.analyze_on(submission,"Off",plot=True,show_examples = True)
+    sub_str_results = Generic.check_substring("female",submission)
+    #aave_results = Generic.aave(submission)
+    anno_results = Generic.check_anno_agreement(submission, ["Off1","Off2","Off3"])
+    
+   # nom_results = COLDAnalysis.analyze_on(submission,"Nom",plot=True,show_examples = True)
+   # cat_results = COLDAnalysis.analyze_on(submission,"Cat", plot= True, show_examples = False)
