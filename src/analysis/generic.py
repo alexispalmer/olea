@@ -20,7 +20,7 @@ class Generic(object) :
                         target_column:str,plot, show_examples) : 
 
          #labels = np.unique(submission.submission[on])
-         totals, correct_predictions_n, results = get_plotting_info_from_col(submission.submission, feature = on, off_col = submission.label_column)
+         totals, correct_predictions_n, results = get_plotting_info_from_col(submission, feature = on)
           
           # plot the bar graph
          if plot:
@@ -28,15 +28,15 @@ class Generic(object) :
                               title = str("Predictions on " + on))
           #get examples
          if show_examples:
-             results = get_examples(submission.submission, on, results, submission.label_column)
+             results = get_examples(submission, on, results)
           
-         metrics = get_metrics(submission.submission, submission.label_column, on)    
+         metrics = get_metrics(submission, on)    
          
          return results, metrics
 
     @classmethod
     def analyze_on(cls, submission:DatasetSubmissionObject, 
-                    features:Union[str, List[str]],plot,show_examples): 
+                    features:Union[str, List[str]],plot=True,show_examples=False): 
 
         return cls._run_analysis_on(submission, 
                                     features, 
@@ -65,8 +65,8 @@ class Generic(object) :
             metrics (df): metrics information for each category
         """ 
         #find instances of substring/ vs no substring
-        df1 = submission.submission[submission.submission['Text'].str.contains(substring)]
-        df2 = submission.submission[~submission.submission['Text'].str.contains(substring)]
+        df1 = submission.submission[submission.submission[submission.text_column].str.contains(substring)]
+        df2 = submission.submission[~submission.submission[submission.text_column].str.contains(substring)]
         
         #create new column
         new_feature = ''.join(["Contains ", '\'',substring, '\''])
@@ -189,7 +189,7 @@ class Generic(object) :
                            hist_bins = hist_bins,
                            xlabel = "Text Length",
                            list_of_values =  submission.submission[new_feature],
-                           correct_preds = correct_preds["Text Length Bin"])
+                           correct_preds = correct_preds[new_feature])
         
         bins, bin_vals, bin_vals_correct = histogram_values(submission.submission[new_feature],
                                                 correct_preds[new_feature])
@@ -219,9 +219,9 @@ class Generic(object) :
         
         #find examples
         if show_examples:
-             results = self.get_examples(submission.submission,new_feature,results, sort_list = True)
+            results = get_examples(submission, new_feature, results,sort_list = True)
 
-        metrics = get_metrics(submission.submission,submission.label_column,new_feature)
+        metrics = get_metrics(submission,submission.label_column,new_feature)
         
         return results,metrics
     
@@ -313,10 +313,10 @@ if __name__ == '__main__' :
     submission = cold.submit(dataset, bool_preds, map=map)
 
     coarse_results = Generic.analyze_on(submission,"Off",plot=True,show_examples = True)
-    substr_results = Generic.check_substring(submission,"female")
-    aave_results = Generic.aave(submission)
-    anno_results = Generic.check_anno_agreement(submission, ["Off1","Off2","Off3"])
-    str_len_results = Generic.str_len_analysis(submission, )
+    substr_results = Generic.check_substring(submission,"female",plot=True,show_examples= True)
+    aave_results = Generic.aave(submission,plot = True, show_examples = True)
+    anno_results = Generic.check_anno_agreement(submission, ["Off1","Off2","Off3"],plot = True, show_examples = True)
+    str_len_results = Generic.str_len_analysis(submission, plot= True, show_examples = True )
     
    # nom_results = COLDAnalysis.analyze_on(submission,"Nom",plot=True,show_examples = True)
    # cat_results = COLDAnalysis.analyze_on(submission,"Cat", plot= True, show_examples = False)

@@ -2,7 +2,7 @@ from src.metrics.metrics import Metrics
 import numpy as np
 import pandas as pd
 
-def get_examples(df,column,results, off_col, sort_list= False):
+def get_examples(submission,column,results, sort_list= False):
     """pull examples where model output label does not line up with true label to illustrate specific cases. Adds one text examples from each value present in the specified column to results data
 
     Args:
@@ -13,15 +13,19 @@ def get_examples(df,column,results, off_col, sort_list= False):
     Returns:
         df: updated results 
     """
+    df = submission.submission
+    off_col = submission.label_column
+    preds = submission.prediction_column
+    
     column_vals = np.unique(df[column])
     if sort_list:
         column_vals = sorted(column_vals,key=lambda x: float(x.split('-')[0].replace(',','')))
     examples= ["" for x in range(results.shape[0])]
     
-    incorrect_df = df[df["preds"] != df[off_col]]
+    incorrect_df = df[df[preds] != df[off_col]]
     
     for i in range(len(column_vals)):
-        example = np.random.choice(incorrect_df[incorrect_df[column] == column_vals[i]]["Text"], 1)
+        example = np.random.choice(incorrect_df[incorrect_df[column] == column_vals[i]][submission.text_column], 1)
         examples[i] = example[0]
         
     results["Example with Incorrect Classification"] = examples
@@ -29,7 +33,7 @@ def get_examples(df,column,results, off_col, sort_list= False):
     return results
     
 
-def get_metrics(df, off_col, column, cats_based_on_labels = False):
+def get_metrics(submission, column, cats_based_on_labels = False):
 
     """Returns metrics information for each categroy specified by column if a column is specified, otherwise it returns metrics over the whole dataset
     
@@ -42,22 +46,26 @@ def get_metrics(df, off_col, column, cats_based_on_labels = False):
         df: metrics information
     
     """
+    off_col = submission.label_column
+    preds = submission.prediction_column
+    df = submission.submission
+    
     if column == off_col:
         #coarse metrics over entire dataset
         # my_metric = Metrics(df[off_col],df["preds"])
         metrics_dict = Metrics.get_metrics_dictionary(y_true = df[off_col], 
-        y_pred = df["preds"])
+        y_pred = df[preds])
         del metrics_dict["accuracy"]
         metrics_df = pd.DataFrame(metrics_dict)
     else:
         #metrics by category specified by column
         metrics_dict = {}
-        column_vals = np.unique(df[column])
+        column_vals = np.unique(df[column].astype(str))
         for value in column_vals:
             df_subset = df.loc[df[column] == value]
             # my_metric = Metrics(df_subset[off_col],df_subset["preds"])
             m_dict = Metrics.get_metrics_dictionary(y_true = df[off_col], 
-                                                    y_pred = df["preds"])
+                                                    y_pred = df[preds])
             del m_dict["accuracy"] #remove accuracy metric, can be viewed elsewhere
             
             if cats_based_on_labels:
@@ -153,7 +161,7 @@ def __remove_nonsensical_labels(m_dict, df_subset,off_col,off_labels):
     
     return totals, correct_predictions_n, results, full_df
 
-def get_plotting_info_from_col(df, feature, off_col):
+def get_plotting_info_from_col(submission, feature):
     """calculates info from a dataframe for metrics and plotting usage using labels from the feature parameter.
 
     Args:
@@ -166,7 +174,11 @@ def get_plotting_info_from_col(df, feature, off_col):
        correct_predictions_n  (list): total instances corresponding to each category that the model predicted correctly
        results  (df): summarization of results, corresponds to plotted information. Contains totals, correct_predictions, and accuracies
     """
-    correct_preds = df[(df['preds'] == df[off_col])]
+    df = submission.submission
+    off_col = submission.label_column
+    preds = submission.prediction_column
+    
+    correct_preds = df[(df[preds] == df[off_col])]
     #get totals
     totals = df[feature].value_counts()
     correct_predictions_n = correct_preds[feature].value_counts()

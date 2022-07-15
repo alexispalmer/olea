@@ -13,6 +13,9 @@ def plot_bar_graph(labels, totals, correct_predictions,
         rot (int): rotation for x-axis ticks
         xlabel (str): x label
     """
+    if len(labels) >2:
+        rot = 45
+    
     plt.bar(labels, totals, color = "red", label = "Total", edgecolor='black')
     ax = plt.bar(labels, correct_predictions, color = "blue", 
                  label = "Correct Predicitons", edgecolor = 'black')

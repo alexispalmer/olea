@@ -3,29 +3,40 @@
 from src.data.cold import COLD, COLDSubmissionObject
 from src.analysis.cold import COLDAnalysis
 from src.analysis.generic import Generic
+from src.data.hatecheck import HateCheck
 
 import numpy as np
 import pandas as pd
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from transformers import TextClassificationPipeline
 
-MODELS = {"HateXplain": {"link" : "Hate-speech-CNERG/bert-base-uncased-hatexplain",
-                         "map" : {"offensive": 'Y' , "hate speech": 'Y' , "normal":'N'}
-                         },
-          "KcELECTRA" : {"link" : "beomi/beep-KcELECTRA-base-hate",
-                         "map" : {"offensive": 'Y' , "hate": 'Y' , "none":'N'}
-                         },
-          "Random":     {"link" : None,
+MODELS = {"HateXplain_COLD": {"link" : "Hate-speech-CNERG/bert-base-uncased-hatexplain",
+                              "map" : {"offensive": 'Y' , "hate speech": 'Y' , "normal":'N'}
+                              },
+          "HateXplain_HC": {"link" : "Hate-speech-CNERG/bert-base-uncased-hatexplain",
+                            "map" : {"offensive": 'hateful' , "hate speech": 'hateful' , "normal":'non-hateful'}
+                            },
+          "Random_COLD":{"link" : None,
                          "map" : {True : 'Y' , False:'N'}
+                         },
+          "Random_HC":{"link" : None,
+                         "map" : {True : 'hateful', False : 'non-hateful'}
                          }
           }
 
-def get_submission (model_name: str):
-    #Load in COLD [IMPORTANT TO DROP FINAL ROW (IT"S NAN)]
-    cold = COLD()
-    dataset = cold._data
+def get_submission (model_name: str, dataset_name :str):
+    #Load in COLD
     
-    if model_name == "Random":
+    if dataset_name == "COLD":
+        cold = COLD()
+        dataset = cold._data
+        text_label = "Text"
+    elif dataset_name == "Hatecheck":
+        hc = HateCheck()
+        dataset = hc.data()
+        text_label = "test_case"
+    
+    if model_name == "Random_HC" or model_name == "Random_COLD":
         num_preds = dataset.shape[0]
         preds = np.random.choice([True, False], size=num_preds)
     else:
@@ -34,24 +45,41 @@ def get_submission (model_name: str):
         model = AutoModelForSequenceClassification.from_pretrained(MODELS[model_name]["link"])
         #Create Pipeline for Predicting
         pipe = TextClassificationPipeline(model=model, tokenizer=tokenizer)
-        predicted = pd.DataFrame(pipe(list(dataset["Text"])))
+        predicted = pd.DataFrame(pipe(list(dataset[text_label])))
         preds = predicted.label
 
     #create submission object
-    submission = cold.submit(cold.data(), preds, map=MODELS[model_name]["map"])
+    if dataset_name == "COLD":
+        submission = cold.submit(cold.data(), preds, map=MODELS[model_name]["map"])
+    elif dataset_name == "Hatecheck":
+        submission = hc.submit(dataset, preds, map=MODELS[model_name]["map"])
+    
     return submission
 
-def run_analysis (submission):
+def run_analysis_generic(submission):
     results = {}
-    results["cold_cat"] = COLDAnalysis.analyze_on(submission,'Cat')
-    results["anno_agree"] = Generic.check_anno_agreement(submission, ["Off1","Off2","Off3"],off_col="Off",show_examples = True)
-    results["coarse"] = COLDAnalysis.analyze_on(submission, 'Off')
-    results["aave"] = Generic.aave(submission)
-    results["#"] = Generic.check_substring("#",submission)
-    results["str_len"] = Generic.str_len_analysis(submission)
-
+    results["aave"] = Generic.aave(submission,show_examples = True)
+    results["female"] = Generic.check_substring(submission,'female',show_examples = True)
+    results["str_len"] = Generic.str_len_analysis(submission,show_examples = True)
     return results
 
+def run_analysis_COLD(submission,results):
+    results = {}
+    results["cold_cat"] = COLDAnalysis.analyze_on(submission,'Cat',show_examples = True)
+    results["coarse"] = COLDAnalysis.analyze_on(submission, 'Off',show_examples = True)
+    results["anno_agree"] = Generic.check_anno_agreement(submission, ["Off1","Off2","Off3"],show_examples = True)
+    return results
+
+def run_analysis_HC(submission):
+    results = {}
+    results["target_ident"] = Generic.analyze_on(submission,'target_ident')
+    return results
+    
 if __name__ == '__main__' : 
-    submission = get_submission("Random")
-    results=run_analysis(submission)
+    submission = get_submission("Random_HC", "Hatecheck")
+    results_hc_g = run_analysis_generic(submission)
+    results_hc = run_analysis_HC(submission)
+    
+    # submission = get_submission("Random_COLD", "COLD")
+    # results_generic_cold = run_analysis_generic(submission,results)
+    # results_COLD = run_analysis_COLD(submission,results)
