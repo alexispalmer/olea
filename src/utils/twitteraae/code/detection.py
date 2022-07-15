@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Jun  7 09:13:27 2022
-
-@author: mcg19
-"""
-import pandas as pd
 from src.utils.twitteraae.code import predict
 from src.utils import preprocess_text 
 
