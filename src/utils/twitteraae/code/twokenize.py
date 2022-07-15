@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 """
 Twokenize -- a tokenizer designed for Twitter text in English and some other European languages.
 This tokenizer code has gone through a long history:

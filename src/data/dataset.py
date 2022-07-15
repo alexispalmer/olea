@@ -1,14 +1,20 @@
-from typing import List
-import requests
-import os
-import csv
-import pickle
+from typing import List, Union
 import pandas as pd
 import numpy as np
 
 class Dataset(object) : 
 
-    def __init__(self) -> None:
+    URL = None
+    dataset_name = None
+    shape = None
+    description = None
+    data_columns = None
+    label_columns = None
+    unique_labels = None
+
+    def __init__(self, data:pd.DataFrame=None, 
+                data_columns=Union[str, List[str]], 
+                label_columns=Union[str, List[str]]) -> None:
         """Initializes the dataset instance. 
 
         The requested dataset is downloaded and saved on the local system. You can choose where the dataset 
@@ -18,15 +24,7 @@ class Dataset(object) :
             dataset_save_dir (str, optional): _description_. Defaults to '~/cold/'.
         """
         
-        self.URL = None
-        self.dataset_name = None
-        self.shape = None
-        self.description = None
-        self.data_columns = None
-        self.label_columns = None
-        self.unique_labels = None
-
-        self._data = self._load_data()
+        self._data = self._load_data(data, data_columns, label_columns)
 
     def __call__(self) -> None:
         pass
@@ -37,8 +35,13 @@ class Dataset(object) :
     def __str__(self) -> str:
         pass
 
-    def _load_data(self) -> None:
-        pass
+    @classmethod
+    def _load_data(cls, data:pd.DataFrame, 
+                data_columns:Union[str, List[str]], 
+                label_columns:Union[str, List[str]]) -> None:
+        cls.data_columns = data_columns
+        cls.label_columns = label_columns
+        return data
 
     def _find_unique_labels(self) :
         self.unique_labels = pd.unique(self._data[self.label_columns].values.ravel('K'))
@@ -110,7 +113,6 @@ class Dataset(object) :
     def submit(self, dataset:pd.DataFrame, submission:iter, map:dict=None) -> None : 
 
         valid_predictions = self._validate_predictions(dataset, submission, map)
-
         submission_df = self._data.loc[self._data.index.isin(dataset.index.values)]
         submission_df['preds'] = valid_predictions
 

@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 # actually that encoding line is NOT important codewise. only for doc purposes.
+
 import re,sys
 
 assert sys.maxunicode >= 0x10ffff, """This appears to be a UCS-2 build of python. We requires UCS-4 or a smarter newfangled one. (This code could be changed to support UCS-2 with some work.)
