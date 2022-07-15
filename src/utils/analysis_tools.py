@@ -17,7 +17,7 @@ def get_examples(submission,column,results, sort_list= False):
     off_col = submission.label_column
     preds = submission.prediction_column
     
-    column_vals = np.unique(df[column])
+    column_vals = np.unique(df[column].astype(str))
     if sort_list:
         column_vals = sorted(column_vals,key=lambda x: float(x.split('-')[0].replace(',','')))
     examples= ["" for x in range(results.shape[0])]

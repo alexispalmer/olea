@@ -17,7 +17,7 @@ class COLDAnalysis(object) :
             rot = 45
             
         #labels = np.unique(submission.submission[on])
-        totals, correct_predictions_n, results = get_plotting_info_from_col(submission.submission, feature = on, off_col = submission.label_column)
+        totals, correct_predictions_n, results = get_plotting_info_from_col(submission, feature = on)
          
          # plot the bar graph
         if plot:
@@ -25,9 +25,9 @@ class COLDAnalysis(object) :
                              title = str("Predictions on " + on),rot = rot)
          #get examples
         if show_examples:
-            results = get_examples(submission.submission, on, results, submission.label_column)
+            results = get_examples(submission, on, results)
          
-        metrics = get_metrics(submission.submission, submission.label_column, on,cats_based_on_labels)    
+        metrics = get_metrics(submission, on,cats_based_on_labels)    
         
         return results, metrics
             

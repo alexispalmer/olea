@@ -63,7 +63,7 @@ def run_analysis_generic(submission):
     results["str_len"] = Generic.str_len_analysis(submission,show_examples = True)
     return results
 
-def run_analysis_COLD(submission,results):
+def run_analysis_COLD(submission):
     results = {}
     results["cold_cat"] = COLDAnalysis.analyze_on(submission,'Cat',show_examples = True)
     results["coarse"] = COLDAnalysis.analyze_on(submission, 'Off',show_examples = True)
@@ -76,10 +76,10 @@ def run_analysis_HC(submission):
     return results
     
 if __name__ == '__main__' : 
-    submission = get_submission("Random_HC", "Hatecheck")
-    results_hc_g = run_analysis_generic(submission)
-    results_hc = run_analysis_HC(submission)
+    hcso = get_submission("HateXplain_HC", "Hatecheck")
+    results_hc_g = run_analysis_generic(hcso)
+    results_hc = run_analysis_HC(hcso)
     
-    # submission = get_submission("Random_COLD", "COLD")
-    # results_generic_cold = run_analysis_generic(submission,results)
-    # results_COLD = run_analysis_COLD(submission,results)
+    coldso = get_submission("HateXplain_COLD", "COLD")
+    results_cold_g= run_analysis_generic(coldso)
+    results_cold = run_analysis_COLD(coldso)
