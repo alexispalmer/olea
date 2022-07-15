@@ -27,7 +27,7 @@ class COLDAnalysis(object) :
         if show_examples:
             results = get_examples(submission.submission, on, results, submission.label_column)
          
-        metrics = get_metrics(submission.submission, on, submission.label_column,cats_based_on_labels)    
+        metrics = get_metrics(submission.submission, submission.label_column, on,cats_based_on_labels)    
         
         return results, metrics
             

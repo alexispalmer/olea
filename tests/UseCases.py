@@ -53,5 +53,5 @@ def run_analysis (submission):
     return results
 
 if __name__ == '__main__' : 
-    submission = get_submission("HateXplain")
+    submission = get_submission("Random")
     results=run_analysis(submission)
