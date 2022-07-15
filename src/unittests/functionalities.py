@@ -10,6 +10,7 @@ class TestTextPreprocessing(unittest.TestCase):
             "THIS SHOULD BE LOWERCASED",
             "RT @amazing_user: Wow, what an amazing tweet",
             "https://fakelink.io http://anotherfakelink.io have you seen this? @another_user",
+            "www.fakelink.io looks like this link doesn't start with http",
             "  WAY  too  many  spaces  in   this  message   ",
             "I can't believe such a thing is possible #amazing #themoreyouknow",
             "Incredible “thought” you have there", 
@@ -24,6 +25,7 @@ class TestTextPreprocessing(unittest.TestCase):
             "this should be lowercased",
             "USER wow, what an amazing tweet",
             "HTML HTML have you seen this? USER",
+            "HTML looks like this link doesn't start with http"
             "way too many spaces in this message",
             "i can't believe such a thing is possible amazing the more you know",
             "incredible \"thought\" you have there",
