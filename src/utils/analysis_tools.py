@@ -117,28 +117,28 @@ def __remove_nonsensical_labels(m_dict, df_subset,off_col,off_labels):
         
     return m_dict
 
-def get_plotting_info_create_col(df1,df2, new_feature,off_col):
-    """prepare two dataframes representing (Y/N) binary distinction of a category for metrics and plotting calculation. 
-    Creates a new column of that category for metrics and plotting usage. Passes df with new column into get_plotting_info_from_col 
-    for calculation.
+# def get_plotting_info_create_col(df1,df2, new_feature,off_col):
+#     """prepare two dataframes representing (Y/N) binary distinction of a category for metrics and plotting calculation. 
+#     Creates a new column of that category for metrics and plotting usage. Passes df with new column into get_plotting_info_from_col 
+#     for calculation.
 
-    Args:
-        df1 (df): one dataframe containing "Y" instances of whatever category. (ie. Instances that contain a hashtag)
-        df2 (df): one dataframe containing "N" non-instances of whatever category.  (ie. Instances that do not contain a hashtag)
-        new_feature (string): name of the new feature (ie. Presence of hashtag)
-        off_col (string): offesnive column
+#     Args:
+#         df1 (df): one dataframe containing "Y" instances of whatever category. (ie. Instances that contain a hashtag)
+#         df2 (df): one dataframe containing "N" non-instances of whatever category.  (ie. Instances that do not contain a hashtag)
+#         new_feature (string): name of the new feature (ie. Presence of hashtag)
+#         off_col (string): offesnive column
 
-    Returns:
-       totals  (list): total instances corresponding to each category
-       correct_predictions_n  (list): total instances corresponding to each category that the model predicted correctly
-       results  (df): summarization of results, corresponds to plotted information
-       full_df  (df): df with the new column - necessary for plotting and retrieving examples
-    """
-    df1[new_feature] = "Y"
-    df2[new_feature] = "N"
-    full_df = df1.merge(df2,"outer")
+#     Returns:
+#        totals  (list): total instances corresponding to each category
+#        correct_predictions_n  (list): total instances corresponding to each category that the model predicted correctly
+#        results  (df): summarization of results, corresponds to plotted information
+#        full_df  (df): df with the new column - necessary for plotting and retrieving examples
+#     """
+#     df1[new_feature] = "Y"
+#     df2[new_feature] = "N"
+#     full_df = df1.merge(df2,"outer")
 
-    totals, correct_predictions_n,results= get_plotting_info_from_col(full_df, new_feature, off_col)
+#     totals, correct_predictions_n,results= get_plotting_info_from_col(full_df, new_feature, off_col)
 
     # totals = [df1.shape[0], df2.shape[0]]
     # #find correct predicitons

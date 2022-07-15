@@ -4,7 +4,7 @@ from typing import Union, List
 from src.viz.viz import plot_bar_graph
 from src.viz.viz import plot_histogram, histogram_values
 from src.utils.analysis_tools import get_metrics, get_examples
-from src.utils.analysis_tools import get_plotting_info_create_col,get_plotting_info_from_col
+from src.utils.analysis_tools import get_plotting_info_from_col
 import pandas as pd
 import numpy as np
 
