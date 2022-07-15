@@ -10,6 +10,10 @@ import numpy as np
 
 class Generic(object) : 
     
+    
+    '''TO DO:
+        Figure out how to incorporate a list of columns
+    '''
     @classmethod
     def _run_analysis_on(cls, submission:DatasetSubmissionObject, 
                         on:Union[str, List[str]], 
@@ -41,8 +45,8 @@ class Generic(object) :
                                     show_examples)
 
     @classmethod
-    def check_substring(cls,substring:str,
-                        submission:DatasetSubmissionObject,
+    def check_substring(cls, submission:DatasetSubmissionObject,
+                        substring:str,
                         plot=True,
                         show_examples=False,
                         ):
@@ -177,8 +181,8 @@ class Generic(object) :
         """  
         #add new feature
         new_feature = "Text Length Bin"
-        submission.submission[new_feature] = submission.submission['Text'].apply(len)
-        correct_preds = submission.submission[(submission.submission['preds'] ==submission.submission[off_col])]
+        submission.submission[new_feature] = submission.submission[submission.text_column].apply(len)
+        correct_preds = submission.submission[(submission.submission[submission.prediction_column] ==submission.submission[submission.label_column])]
         
         if plot:
             plot_histogram(title = "Predictions on Different Text Lengths", 
@@ -217,7 +221,7 @@ class Generic(object) :
         if show_examples:
              results = self.get_examples(submission.submission,new_feature,results, sort_list = True)
 
-        metrics = get_metrics(submission.submission,off_col,new_feature)
+        metrics = get_metrics(submission.submission,submission.label_column,new_feature)
         
         return results,metrics
     
@@ -309,9 +313,10 @@ if __name__ == '__main__' :
     submission = cold.submit(dataset, bool_preds, map=map)
 
     coarse_results = Generic.analyze_on(submission,"Off",plot=True,show_examples = True)
-    sub_str_results = Generic.check_substring("female",submission)
-    #aave_results = Generic.aave(submission)
+    substr_results = Generic.check_substring(submission,"female")
+    aave_results = Generic.aave(submission)
     anno_results = Generic.check_anno_agreement(submission, ["Off1","Off2","Off3"])
+    str_len_results = Generic.str_len_analysis(submission, )
     
    # nom_results = COLDAnalysis.analyze_on(submission,"Nom",plot=True,show_examples = True)
    # cat_results = COLDAnalysis.analyze_on(submission,"Cat", plot= True, show_examples = False)
