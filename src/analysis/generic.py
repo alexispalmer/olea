@@ -69,8 +69,8 @@ class Generic(object) :
         df2 = submission.submission[~submission.submission[submission.text_column].str.contains(substring)]
         
         #create new column
-        new_feature = ''.join(["Contains ", '\'',substring, '\''])
-        labels = ["Y","N"]
+        new_feature = ''.join(["Containing ", '\'',substring, '\''])
+        labels = [new_feature, str("Not " + new_feature)]
         df1[new_feature] = labels[0]
         df2[new_feature] = labels[1]
         submission.submission = df1.merge(df2,"outer")
@@ -312,10 +312,10 @@ if __name__ == '__main__' :
 
     submission = cold.submit(dataset, bool_preds, map=map)
 
-    coarse_results = Generic.analyze_on(submission,"Off",plot=True,show_examples = True)
-    substr_results = Generic.check_substring(submission,"female",plot=True,show_examples= True)
-    aave_results = Generic.aave(submission,plot = True, show_examples = True)
-    anno_results = Generic.check_anno_agreement(submission, ["Off1","Off2","Off3"],plot = True, show_examples = True)
+   # coarse_results = Generic.analyze_on(submission,"Off",plot=True,show_examples = True)
+   # substr_results = Generic.check_substring(submission,"female",plot=True,show_examples= True)
+   # aave_results = Generic.aave(submission,plot = True, show_examples = True)
+   # anno_results = Generic.check_anno_agreement(submission, ["Off1","Off2","Off3"],plot = True, show_examples = True)
     str_len_results = Generic.str_len_analysis(submission, plot= True, show_examples = True )
     
    # nom_results = COLDAnalysis.analyze_on(submission,"Nom",plot=True,show_examples = True)

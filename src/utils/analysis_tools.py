@@ -25,7 +25,10 @@ def get_examples(submission,column,results, sort_list= False):
     incorrect_df = df[df[preds] != df[off_col]]
     
     for i in range(len(column_vals)):
-        example = np.random.choice(incorrect_df[incorrect_df[column] == column_vals[i]][submission.text_column], 1)
+        if incorrect_df[incorrect_df[column] == column_vals[i]][submission.text_column].empty:
+            example = [""]
+        else:
+            example = np.random.choice(incorrect_df[incorrect_df[column] == column_vals[i]][submission.text_column], 1)
         examples[i] = example[0]
         
     results["Example with Incorrect Classification"] = examples

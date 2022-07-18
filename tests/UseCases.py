@@ -19,9 +19,17 @@ MODELS = {"HateXplain_COLD": {"link" : "Hate-speech-CNERG/bert-base-uncased-hate
           "Random_COLD":{"link" : None,
                          "map" : {True : 'Y' , False:'N'}
                          },
-          "Random_HC":{"link" : None,
+          "Random_HC":  {"link" : None,
                          "map" : {True : 'hateful', False : 'non-hateful'}
+                         },
+          "Roberta_COLD": {"link" : "cardiffnlp/twitter-roberta-base-offensive",
+                         "map" : {"LABEL_0": 'N', 'LABEL_1': "Y"}
+                         },
+          
+          "Roberta_HC": {"link" : "cardiffnlp/twitter-roberta-base-offensive",
+                         "map" :{"LABEL_0": 'non-hateful', 'LABEL_1': "hateful"}
                          }
+          
           }
 
 def get_submission (model_name: str, dataset_name :str):
@@ -76,10 +84,18 @@ def run_analysis_HC(submission):
     return results
     
 if __name__ == '__main__' : 
-    hcso = get_submission("HateXplain_HC", "Hatecheck")
-    results_hc_g = run_analysis_generic(hcso)
-    results_hc = run_analysis_HC(hcso)
+    # hcso = get_submission("HateXplain_HC", "Hatecheck")
+    # results_hc_g = run_analysis_generic(hcso)
+    # results_hc = run_analysis_HC(hcso)
     
-    coldso = get_submission("HateXplain_COLD", "COLD")
-    results_cold_g= run_analysis_generic(coldso)
-    results_cold = run_analysis_COLD(coldso)
+    # coldso = get_submission("HateXplain_COLD", "COLD")
+    # results_cold_g= run_analysis_generic(coldso)
+    # results_cold = run_analysis_COLD(coldso)
+    
+    rso_hc = get_submission("Roberta_HC", "Hatecheck")
+    results_hc_g = run_analysis_generic(rso_hc)
+    results_hc = run_analysis_HC(rso_hc)
+    
+    rso_cold= get_submission("Roberta_COLD", "COLD")
+    results_cold_g= run_analysis_generic(rso_cold)
+    results_cold = run_analysis_COLD(rso_cold)
