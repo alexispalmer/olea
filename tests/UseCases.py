@@ -4,6 +4,7 @@ from src.data.cold import COLD, COLDSubmissionObject
 from src.analysis.cold import COLDAnalysis
 from src.analysis.generic import Generic
 from src.data.hatecheck import HateCheck
+from src.utils import preprocess_text 
 
 import numpy as np
 import pandas as pd
@@ -39,10 +40,17 @@ def get_submission (model_name: str, dataset_name :str):
         cold = COLD()
         dataset = cold._data
         text_label = "Text"
+        
     elif dataset_name == "Hatecheck":
         hc = HateCheck()
         dataset = hc.data()
         text_label = "test_case"
+        
+    pt = preprocess_text.PreprocessText()
+    processed_text = pt.execute(dataset[text_label])
+    dataset[text_label] =processed_text
+    
+          
     
     if model_name == "Random_HC" or model_name == "Random_COLD":
         num_preds = dataset.shape[0]
@@ -91,11 +99,10 @@ if __name__ == '__main__' :
     # coldso = get_submission("HateXplain_COLD", "COLD")
     # results_cold_g= run_analysis_generic(coldso)
     # results_cold = run_analysis_COLD(coldso)
-    
-    rso_hc = get_submission("Roberta_HC", "Hatecheck")
-    results_hc_g = run_analysis_generic(rso_hc)
-    results_hc = run_analysis_HC(rso_hc)
-    
     rso_cold= get_submission("Roberta_COLD", "COLD")
     results_cold_g= run_analysis_generic(rso_cold)
     results_cold = run_analysis_COLD(rso_cold)
+    
+    rso_hc = get_submission("Roberta_HC", "Hatecheck")
+    results_hc = run_analysis_HC(rso_hc)
+    

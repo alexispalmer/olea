@@ -17,21 +17,30 @@ def get_examples(submission,column,results, sort_list= False):
     off_col = submission.label_column
     preds = submission.prediction_column
     
-    column_vals = np.unique(df[column].astype(str))
+    column_vals = results[column]
     if sort_list:
         column_vals = sorted(column_vals,key=lambda x: float(x.split('-')[0].replace(',','')))
     examples= ["" for x in range(results.shape[0])]
+    examples_pred = ["" for x in range(results.shape[0])]
+    examples_gold= ["" for x in range(results.shape[0])]
     
     incorrect_df = df[df[preds] != df[off_col]]
     
     for i in range(len(column_vals)):
-        if incorrect_df[incorrect_df[column] == column_vals[i]][submission.text_column].empty:
-            example = [""]
+        incorrect_values = incorrect_df[incorrect_df[column] == column_vals[i]]
+        if incorrect_values.empty:
+            examples[i] = ""
+            examples_pred[i] = ""
+            examples_gold[i] = ""
         else:
-            example = np.random.choice(incorrect_df[incorrect_df[column] == column_vals[i]][submission.text_column], 1)
-        examples[i] = example[0]
+            example = incorrect_values.sample(1)
+            examples[i] = example[submission.text_column].iloc[0]
+            examples_pred[i] = example[submission.prediction_column].iloc[0]
+            examples_gold[i] = example[submission.label_column].iloc[0]
         
     results["Example with Incorrect Classification"] = examples
+    results["Example Predicted Label"] = examples_pred
+    results["Example Gold Label"] = examples_gold
     
     return results
     

@@ -25,6 +25,7 @@ class HateCheck(Dataset) :
                         use_auth_token='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')[self.split].to_pandas()
 
         df = df.drop(columns='Unnamed: 0')
+        df['target_ident'] = df["target_ident"].astype(str)
         return df 
 
     def submit(self, dataset: pd.DataFrame, submission: iter, map: dict = None) -> DatasetSubmissionObject:

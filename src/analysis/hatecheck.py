@@ -39,6 +39,7 @@ class HateCheckAnalysis(object) :
     @classmethod
     def _run_analysis_on_functionality(cls, submission:HateCheckSubmissionObject, on:Union[str,List[str]]) :
         
+        
         if on in cls.categories : 
             analysis_set = submission[submission['functionality'].isin(cls.categories[on])]
         elif type(on) == str : 

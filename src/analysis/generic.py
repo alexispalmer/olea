@@ -312,11 +312,11 @@ if __name__ == '__main__' :
 
     submission = cold.submit(dataset, bool_preds, map=map)
 
-   # coarse_results = Generic.analyze_on(submission,"Off",plot=True,show_examples = True)
-   # substr_results = Generic.check_substring(submission,"female",plot=True,show_examples= True)
-   # aave_results = Generic.aave(submission,plot = True, show_examples = True)
-   # anno_results = Generic.check_anno_agreement(submission, ["Off1","Off2","Off3"],plot = True, show_examples = True)
+    # coarse_results = Generic.analyze_on(submission,"Off",plot=True,show_examples = True)
+    # substr_results = Generic.check_substring(submission,"female",plot=True,show_examples= True)
+    # aave_results = Generic.aave(submission,plot = True, show_examples = True)
+    # anno_results = Generic.check_anno_agreement(submission, ["Off1","Off2","Off3"],plot = True, show_examples = True)
     str_len_results = Generic.str_len_analysis(submission, plot= True, show_examples = True )
     
-   # nom_results = COLDAnalysis.analyze_on(submission,"Nom",plot=True,show_examples = True)
-   # cat_results = COLDAnalysis.analyze_on(submission,"Cat", plot= True, show_examples = False)
+   #nom_results = COLDAnalysis.analyze_on(submission,"Nom",plot=True,show_examples = True)
+    #cat_results = COLDAnalysis.analyze_on(submission,"Cat", plot= True, show_examples = False)
