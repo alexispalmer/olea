@@ -48,8 +48,8 @@ class HateXplain(Dataset) :
 
 class HateXplainSubmissionObject(DatasetSubmissionObject) : 
 
-    def __init__(self, submission_df: pd.DataFrame):
-        super().__init__(submission_df)
+    def __init__(self, submission : DatasetSubmissionObject):
+        self.submission = submission.submission
 
 
     def filter_submission(self, on:str, filter:callable, **kwargs):

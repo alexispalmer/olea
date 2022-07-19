@@ -1,14 +1,20 @@
 import pandas as pd
-from abc import abstractmethod, ABC
 
 from typing import List, Tuple
 
-class DatasetSubmissionObject(ABC) : 
 
-    def __init__(self, submission_df:pd.DataFrame) : 
+class DatasetSubmissionObject(object) : 
+
+    def __init__(self, 
+                submission_df:pd.DataFrame, 
+                dataset_object:object) : 
+        
+        for key, value in dataset_object.__dict__.items() : 
+            setattr(self, key, value)
+
         self.submission = submission_df
+        self.prediction_column = 'preds'
 
 
-    @abstractmethod
     def filter_submission(self, on:str, filter:callable, **kwargs)  : 
         pass

@@ -2,19 +2,14 @@ from typing import List, Union
 import pandas as pd
 import numpy as np
 
-class Dataset(object) : 
+from src.data.dso import DatasetSubmissionObject
 
-    URL = None
-    dataset_name = None
-    shape = None
-    description = None
-    data_columns = None
-    label_columns = None
-    unique_labels = None
+class Dataset(object) : 
 
     def __init__(self, data:pd.DataFrame=None, 
                 data_columns=Union[str, List[str]], 
-                label_columns=Union[str, List[str]]) -> None:
+                label_column=str,
+                text_column=str) -> None:
         """Initializes the dataset instance. 
 
         The requested dataset is downloaded and saved on the local system. You can choose where the dataset 
@@ -23,8 +18,17 @@ class Dataset(object) :
         Args:
             dataset_save_dir (str, optional): _description_. Defaults to '~/cold/'.
         """
+        self.URL = None
+        self.dataset_name = None
+        self.shape = None
+        self.description = None
+        self.data_columns = None
+        self.label_column = None
+        self.text_column = None
+        self.unique_labels = None
+        self._data = None
         
-        self._data = self._load_data(data, data_columns, label_columns)
+        self._load_data(data, data_columns, label_column, text_column)
 
     def __call__(self) -> None:
         pass
@@ -35,16 +39,17 @@ class Dataset(object) :
     def __str__(self) -> str:
         pass
 
-    @classmethod
-    def _load_data(cls, data:pd.DataFrame, 
+    def _load_data(self, data:pd.DataFrame, 
                 data_columns:Union[str, List[str]], 
-                label_columns:Union[str, List[str]]) -> None:
-        cls.data_columns = data_columns
-        cls.label_columns = label_columns
-        return data
+                label_column:str,
+                text_column:str) -> None:
+        self.data_columns = data_columns
+        self.label_column = label_column
+        self.text_column = text_column
+        self._data = data
 
     def _find_unique_labels(self) :
-        self.unique_labels = pd.unique(self._data[self.label_columns].values.ravel('K'))
+        self.unique_labels = pd.unique(self._data[self.label_column].values.ravel('K'))
 
     def _validate_predictions(self, dataset, submission, map=None) :
 
@@ -89,6 +94,7 @@ class Dataset(object) :
 
     def generator(self, batch_size) -> pd.DataFrame:
         
+        batch_size -= 1 # Pandas indexes weird
         start = 0
         end = batch_size
 
@@ -97,7 +103,7 @@ class Dataset(object) :
             if end < self._data.shape[0] :
 
                 batch = self._data.loc[start:end, self.data_columns]
-                start +=  batch_size
+                start +=  batch_size + 1 # Once again, Pandas indexes weirdly
                 end  = start + batch_size
 
             elif end >= self._data.shape[0] : 
@@ -116,5 +122,7 @@ class Dataset(object) :
         submission_df = self._data.loc[self._data.index.isin(dataset.index.values)]
         submission_df['preds'] = valid_predictions
 
-        return submission_df
+        submission_object = DatasetSubmissionObject(submission_df, self)
+
+        return submission_object
 
