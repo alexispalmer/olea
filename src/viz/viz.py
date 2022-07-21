@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 def plot_bar_graph(labels, totals, correct_predictions,
@@ -13,15 +14,21 @@ def plot_bar_graph(labels, totals, correct_predictions,
         rot (int): rotation for x-axis ticks
         xlabel (str): x label
     """
+    ha = "center"
+    fsize=10
     if len(labels) >2:
         rot = 45
-    
+        ha = "right"
+        if len(labels) >12:
+            fsize= 8
+        
     plt.bar(labels, totals, color = "red", label = "Total", edgecolor='black')
     ax = plt.bar(labels, correct_predictions, color = "blue", 
                  label = "Correct Predicitons", edgecolor = 'black')
     plt.legend()
     plt.title(title)
-    plt.xticks(ticks = labels, rotation = rot)
+    plt.xticks(ticks = np.arange(labels.shape[0]), labels = labels, rotation = rot,ha=ha, rotation_mode='anchor')
+    plt.tick_params(axis='x', labelsize=fsize)
     plt.xlabel(xlabel)
     plt.ylabel("Number of Instances")
     plt.show()

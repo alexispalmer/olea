@@ -4,6 +4,7 @@ import numpy as np
 from src.data.hatecheck import HateCheckSubmissionObject
 from src.utils.analysis_tools import get_metrics, get_examples
 from src.data.dso import DatasetSubmissionObject
+from src.analysis.generic import Generic
 
 class HateCheckAnalysis(object) : 
 
@@ -37,26 +38,64 @@ class HateCheckAnalysis(object) :
                 }
 
     @classmethod
-    def _run_analysis_on_functionality(cls, submission:HateCheckSubmissionObject, on:Union[str,List[str]]) :
+    def _run_analysis_on_functionality(cls, submission:HateCheckSubmissionObject, on:Union[str,List[str]],show_examples,plot) :
+    
+        if type(on) == str and on == "category":
+            new_dic = {}
+            for k,v in cls.categories.items():
+                for x in v:
+                    new_dic.setdefault(x,[]).append(k)
+                    
+            submission.submission[on] = submission.submission.apply (lambda row: new_dic[row.functionality][0], axis=1)
+            return Generic.analyze_on(submission, on, show_examples, plot)
         
         
-        if on in cls.categories : 
-            analysis_set = submission[submission['functionality'].isin(cls.categories[on])]
-        elif type(on) == str : 
-            analysis_set = submission[submission['functionality'] == on]
-        else : 
-            analysis_set = submission[submission['functionality'].isin(on)]
+        if type(on) ==str and on in cls.categories : 
+            #on is a str of one category
+           df1 = submission.submission[submission.submission['functionality'].isin(cls.categories[on])]
+           df2 = submission.submission[~submission.submission['functionality'].isin(cls.categories[on])]
+           new_feature = on
+           #analysis_set = submission.submission[submission.submission['functionality'].isin(cls.categories[on])]
+           #find instances of feature vs not feture
+           
+        if set(on) <= cls.categories.keys():
+            #On is a list of categories            
+            categories = []
+            for f in on:
+                for x in cls.categories[f]:
+                    categories.append(x)
+            
+            df1 = submission.submission[submission.submission['functionality'].isin(categories)]
+            df2 = submission.submission[~submission.submission['functionality'].isin(categories)]
+            new_feature = str(", ").join(on)
+            
+        labels = [new_feature, str("Not " + new_feature)]
+        df1[new_feature] = labels[0]
+        df2[new_feature] = labels[1]
+        submission.submission = df1.merge(df2,"outer")
+        return Generic.analyze_on (submission, new_feature, show_examples, plot)
+           
+           
+        #elif type(on) == str : 
+           # analysis_set = submission.submission[submission.submission['functionality'] == on]
+        # else : 
+        #     analysis_set = submission.submission[submission.submission['functionality'].isin(on)]
 
-        return get_metrics(df = analysis_set, 
-                           off_col = cls.label_column, 
-                           column = None)
-    @classmethod
-    def analyze_on(cls, hatecheck_submission:HateCheckSubmissionObject, on:Union[str, List[str]]) : 
-        return cls._run_analysis_on_functionality(submission=hatecheck_submission.submission, on=on)
+        
+        #create new column
+           
 
+       
+        # return get_metrics(df = analysis_set, 
+        #                    off_col = cls.label_column, 
+        #                    column = None)
     @classmethod
-    def analyze_on_all(cls, hatecheck_submission:HateCheckSubmissionObject) :
-        return cls._run_analysis_on_functionality(submission=hatecheck_submission.submission, on=cls.functionalities)
+    def analyze_on(cls, hatecheck_submission:HateCheckSubmissionObject, on:Union[str, List[str]], show_examples = True, plot =True) : 
+        return cls._run_analysis_on_functionality(hatecheck_submission, on, show_examples, plot)
+
+    # @classmethod
+    # def analyze_on_all(cls, hatecheck_submission:HateCheckSubmissionObject) :
+    #     return cls._run_analysis_on_functionality(submission=hatecheck_submission.submission, on=cls.functionalities)
 
 
 if __name__ == '__main__' : 
@@ -75,16 +114,21 @@ if __name__ == '__main__' :
     hcso = hc.submit(hc_data, mock_preds, map)
 
     print('Analysis on acceptable abuse...')
-    print(HateCheckAnalysis.analyze_on(hcso, 'nonhateful-abuse'))
+    print(Generic.analyze_on(hcso, 'functionality'))
 
     print('Analysis on hateful abuse...')
-    print(HateCheckAnalysis.analyze_on(hcso, 'hateful-abuse'))
+    print(HateCheckAnalysis.analyze_on(hcso, ['profanity','threats','slurs']))
+
+    print('Analysis on hateful abuse...')
+    print(HateCheckAnalysis.analyze_on(hcso, 'category'))
 
     print('Analysis on negation...')
-    print(HateCheckAnalysis.analyze_on(hcso, 'negation'))
+    print(HateCheckAnalysis.analyze_on(hcso, 'threats'))
 
-    print('Analysis on all functionalities...')
-    print(HateCheckAnalysis.analyze_on_all_functionalities(hcso))
+
+
+    # print('Analysis on all functionalities...')
+    # print(HateCheckAnalysis.analyze_on_all_functionalities(hcso))
 
     
 

@@ -3,6 +3,7 @@
 from src.data.cold import COLD, COLDSubmissionObject
 from src.analysis.cold import COLDAnalysis
 from src.analysis.generic import Generic
+from src.analysis.hatecheck import HateCheckAnalysis
 from src.data.hatecheck import HateCheck
 from src.utils import preprocess_text 
 
@@ -89,13 +90,13 @@ def run_analysis_COLD(submission):
 def run_analysis_HC(submission):
     results = {}
     results["target_ident"] = Generic.analyze_on(submission,'target_ident')
+    results["category"] = HateCheckAnalysis.analyze_on(submission, 'category')
     return results
     
 if __name__ == '__main__' : 
     # hcso = get_submission("HateXplain_HC", "Hatecheck")
-    # results_hc_g = run_analysis_generic(hcso)
+    #results_hc_g = run_analysis_generic(hcso)
     # results_hc = run_analysis_HC(hcso)
-    
     # coldso = get_submission("HateXplain_COLD", "COLD")
     # results_cold_g= run_analysis_generic(coldso)
     # results_cold = run_analysis_COLD(coldso)

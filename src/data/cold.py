@@ -12,6 +12,7 @@ class COLD(Dataset) :
         self.description = 'This is the dataset from COLD.'
         self.data_columns = ['ID', 'DataSet', 'Text']
         self.label_columns = ['Off', 'Slur', 'Nom', 'Dist']
+        self.label_column = 'Off'
         self.unique_labels = None
         self.split = split
 

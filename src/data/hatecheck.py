@@ -14,6 +14,7 @@ class HateCheck(Dataset) :
         self.data_columns = ['functionality', 'case_id' , 'test_case' , 'direction' , 
                             'focus_words' , 'focus_lemma']
         self.label_columns = ['label_gold']
+        self.label_column ='label_gold'
         self.unique_labels = None
         self.split = 'test'
 
