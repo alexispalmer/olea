@@ -2,7 +2,7 @@
 # different aspects of the library are working as expected.
 
 import unittest
-from src.utils.preprocess_text import PreprocessText as pt
+from olea.utils.preprocess_text import PreprocessText as pt
 
 class TestTextPreprocessing(unittest.TestCase):
     def test_text_preprocessing(self):

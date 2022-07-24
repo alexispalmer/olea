@@ -1,4 +1,4 @@
-from src.data.dso import DatasetSubmissionObject
+from olea.data.dso import DatasetSubmissionObject
 
 
 

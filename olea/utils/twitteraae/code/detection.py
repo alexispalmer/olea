@@ -1,5 +1,5 @@
-from src.utils.twitteraae.code import predict
-from src.utils import preprocess_text 
+from olea.utils.twitteraae.code import predict
+from olea.utils import preprocess_text 
 
 def get_aave_values(submission):
     predict.load_model()

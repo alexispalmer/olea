@@ -1,5 +1,5 @@
-from src.data.dataset import Dataset
-from src.data.dso import DatasetSubmissionObject
+from olea.data.dataset import Dataset
+from olea.data.dso import DatasetSubmissionObject
 
 from datasets import load_dataset
 import pandas as pd

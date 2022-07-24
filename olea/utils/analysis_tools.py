@@ -1,4 +1,4 @@
-from src.metrics.metrics import Metrics
+from olea.metrics.metrics import Metrics
 import numpy as np
 import pandas as pd
 

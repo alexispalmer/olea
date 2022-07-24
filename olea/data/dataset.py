@@ -2,7 +2,7 @@ from typing import List, Union
 import pandas as pd
 import numpy as np
 
-from src.data.dso import DatasetSubmissionObject
+from olea.data.dso import DatasetSubmissionObject
 
 class Dataset(object) : 
 

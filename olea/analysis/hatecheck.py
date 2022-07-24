@@ -1,10 +1,10 @@
 from typing import List, Union
 import numpy as np
 
-from src.data.hatecheck import HateCheckSubmissionObject
-from src.utils.analysis_tools import get_metrics, get_examples
-from src.data.dso import DatasetSubmissionObject
-from src.analysis.generic import Generic
+from olea.data.hatecheck import HateCheckSubmissionObject
+from olea.utils.analysis_tools import get_metrics, get_examples
+from olea.data.dso import DatasetSubmissionObject
+from olea.analysis.generic import Generic
 
 class HateCheckAnalysis(object) : 
 
@@ -102,7 +102,7 @@ if __name__ == '__main__' :
 
     import pandas as pd
 
-    from src.data.hatecheck import HateCheck
+    from olea.data.hatecheck import HateCheck
 
     hc = HateCheck()
     hc_data = hc.data()

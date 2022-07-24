@@ -1,8 +1,8 @@
-from src.data.dso import DatasetSubmissionObject
-from src.data.cold import COLDSubmissionObject
-from src.utils.analysis_tools import get_metrics, get_examples
-from src.utils.analysis_tools import get_plotting_info_from_col
-from src.viz.viz import plot_bar_graph
+from olea.data.dso import DatasetSubmissionObject
+from olea.data.cold import COLDSubmissionObject
+from olea.utils.analysis_tools import get_metrics, get_examples
+from olea.utils.analysis_tools import get_plotting_info_from_col
+from olea.viz.viz import plot_bar_graph
 import numpy as np
 
 class COLDAnalysis(object) : 
@@ -132,10 +132,10 @@ class COLDAnalysis(object) :
 
 if __name__ == '__main__' : 
 
-    from src.data.cold import COLD, COLDSubmissionObject
-    from src.analysis.cold import COLDAnalysis
+    from olea.data.cold import COLD, COLDSubmissionObject
+    from olea.analysis.cold import COLDAnalysis
     import numpy as np
-    from src.utils.preprocess_text import PreprocessText as pt
+    from olea.utils.preprocess_text import PreprocessText as pt
 
     cold = COLD()
 

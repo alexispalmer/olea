@@ -1,10 +1,10 @@
-from src.data.dso import DatasetSubmissionObject
-from src.utils.twitteraae.code import detection 
+from olea.data.dso import DatasetSubmissionObject
+from olea.utils.twitteraae.code import detection 
 from typing import Union, List
-from src.viz.viz import plot_bar_graph
-from src.viz.viz import plot_histogram, histogram_values
-from src.utils.analysis_tools import get_metrics, get_examples
-from src.utils.analysis_tools import get_plotting_info_from_col
+from olea.viz.viz import plot_bar_graph
+from olea.viz.viz import plot_histogram, histogram_values
+from olea.utils.analysis_tools import get_metrics, get_examples
+from olea.utils.analysis_tools import get_plotting_info_from_col
 import pandas as pd
 import numpy as np
 
@@ -291,10 +291,10 @@ class Generic(object) :
     
 if __name__ == '__main__' : 
 
-    from src.data.cold import COLD, COLDSubmissionObject
-    from src.analysis.generic import Generic
+    from olea.data.cold import COLD, COLDSubmissionObject
+    from olea.analysis.generic import Generic
     import numpy as np
-    from src.utils.preprocess_text import PreprocessText as pt
+    from olea.utils.preprocess_text import PreprocessText as pt
 
     cold = COLD()
     dataset = cold.data()
