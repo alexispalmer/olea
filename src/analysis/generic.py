@@ -16,8 +16,24 @@ class Generic(object) :
     '''
     @classmethod
     def _run_analysis_on(cls, submission:DatasetSubmissionObject, 
-                        on:Union[str, List[str]], 
+                        on:str, 
                         target_column:str,plot, show_examples) : 
+        
+        """helper function for running analysis on a specific column. Returns two dataframes. plot_info corresponds to 
+            information that is plotted, number of offensive/non offensive instances for each category in "on" as well as
+            accuracy of model. Metrics returns the classification report for each category specified on "on"
+
+        Args:
+            submission (COLDSubmissionObject): submission object to run analysis on
+            on (str): column name in submission.submission dataframe to run analysis on
+            plot (boolean): to plot results or not
+            show_examples (boolean): to return examples or not
+
+        Returns:
+            plot_info (df) : results corresponding to plotted information:(total instances for each category,
+                             total correctly predicted, and accuracy)
+            metrics (df): classification report for each category
+        """
 
          #labels = np.unique(submission.submission[on])
          totals, correct_predictions_n, results = get_plotting_info_from_col(submission, feature = on)
@@ -28,16 +44,33 @@ class Generic(object) :
                               title = str("Predictions on " + on))
           #get examples
          if show_examples:
-             results = get_examples(submission, on, results)
+             plot_info = get_examples(submission, on, results)
           
          metrics = get_metrics(submission, on)    
          
-         return results, metrics
+         return plot_info, metrics
 
     @classmethod
     def analyze_on(cls, submission:DatasetSubmissionObject, 
                     features:Union[str, List[str]],plot=True,show_examples=False): 
+        """function for running analysis on a specific column, and plots results if specified. Returns two dataframes. 
+            plot_info corresponds to information that is plotted, number of offensive/non offensive instances for each category 
+            in "on" as well as
+            accuracy of model. Metrics returns the classification report for each category specified on "on"
 
+        Args:
+            submission (COLDSubmissionObject): submission object to run analysis on
+            on (str): column name in submission.submission dataframe to run analysis on
+            plot (boolean): to plot results or not
+            show_examples (boolean): to return examples or not
+
+        Returns:
+            plot_info (df) : results corresponding to plotted information:(total instances for each category,
+                             total correctly predicted, and accuracy)
+            metrics (df): classification report for each category
+        """
+        
+        
         return cls._run_analysis_on(submission, 
                                     features, 
                                     submission.label_column, 
@@ -53,16 +86,16 @@ class Generic(object) :
         """check how model predicts on instances containing a specific substring vs without that substring.
 
         Args:
-            substring (str): stubstring to search for 
             submission (DatasetSUbmissionObject): submission object to use, containing df
+            substring (str): stubstring to search for 
             plot (boolean): to plot or not to plot
             show_examples (boolean): to show examples of instances the model predicted incorrectly or not
                                     (WARNING: LIKELY CONTAINS OFFENSIVE LANGUAGE)
             off_col (str): ground truth column name 
         Returns:
-            results (df) : results corresponding to plotted information:(total instances for each category,
+            plot_info (df) : results corresponding to plotted information:(total instances for each category,
                              total correctly predicted, and accuracy)
-            metrics (df): metrics information for each category
+            metrics (df): classification report for each category
         """ 
         #find instances of substring/ vs no substring
         df1 = submission.submission[submission.submission[submission.text_column].str.contains(substring)]
@@ -117,9 +150,9 @@ class Generic(object) :
                                     (WARNING: LIKELY CONTAINS OFFENSIVE LANGUAGE)
             off_col (str): ground truth column name 
         Returns:
-            results (df) : results corresponding to plotted information:(total instances for each category,
+            plot_info (df) : results corresponding to plotted information:(total instances for each category,
                              total correctly predicted, and accuracy)
-            metrics (df): metrics information for each category
+            metrics (df): classification report for each category
         """ 
         #get aave values
         aave_values = detection.get_aave_values(submission)
@@ -175,9 +208,9 @@ class Generic(object) :
                                     (WARNING: LIKELY CONTAINS OFFENSIVE LANGUAGE)
             off_col (str): ground truth column name 
         Returns:
-            results (df) : results corresponding to plotted information:(total instances for each category,
+            plot_info (df) : results corresponding to plotted information:(total instances for each category,
                              total correctly predicted, and accuracy)
-            metrics (df): metrics information for each category
+            metrics (df): classification report for each category
         """  
         #add new feature
         new_feature = "Text Length Bin"
@@ -229,27 +262,23 @@ class Generic(object) :
     def check_anno_agreement(cls,submission: DatasetSubmissionObject, 
                              anno_columns: list,
                              plot = True, show_examples=False) -> pd.DataFrame:
-        """This calculates the annotator agreement of the dataset.
+        """how model predicts on instances where annotators fully agree in whether text is offensive ("Y","Y","Y") or ("N","N","N).
+#             vs when there is partial agreement. This should indicate performance on "easy" (full) vs "difficult" (partial) cases
+#             Updates cold dataset with new feature column of full vs partial agreement
 
         Args:
             submission (DatasetSubmissionObject): This is a DatasetSubmissionObject (which ultimately is a pd.DataFrame)
-
-            anno_columns (list): Give the column names that contain the
-            annotator values in the dataframe as a list, 
-            off_col (str): the column containing the "ground truth"
-            eg: ["Anno1", "Anno2", "Anno3"].
-            preds (list): Give the column name that contains the predicted 
-            values in the dataframe as a list, eg: ["preds"].
-            plot (bool, optional): Plot the annotator agreement as a bar plot. 
-            Defaults to True.
+            anno_columns (list): Give the column names that contain the annotator values in the dataframe as a list, 
+                eg: ["Anno1", "Anno2", "Anno3"].
+            plot (bool, optional): Plot the annotator agreement as a bar plot. Defaults to True.
             show_examples(bool,optional) : to show examples of instances the model predicted incorrectly or not
                                          (WARNING: LIKELY CONTAINS OFFENSIVE LANGUAGE)
 
         Returns:
-            results(pd.DataFrame): Returns a dataframe that calculates the full 
+            plot_info (pd.DataFrame): Returns a dataframe that calculates the full 
             agreemeent, total correct predictions, total, and accuracy values 
             for the annotator data.
-            metrics (df): metrics information for each category
+            metrics (df): classification report for each category
 
 
         """
