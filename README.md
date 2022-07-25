@@ -33,15 +33,15 @@ from transformers import TextClassificationPipeline
 ```
 2. Downloading the data
 ```sh
+#Load Dataset
 cold = COLD()
-```
-3. Predicting on the dataset (Example model is HateXplain downloaded from HuggingFace)
-```sh
+
 #Load Model
 link = "Hate-speech-CNERG/bert-base-uncased-hatexplain"
 tokenizer = AutoTokenizer.from_pretrained(link)
 model = AutoModelForSequenceClassification.from_pretrained(link)
 ```
+3. Predicting on the dataset (Example model is HateXplain downloaded from HuggingFace)
 ```sh
 #Predict on COLD
 pipe = TextClassificationPipeline(model=model, tokenizer=tokenizer)
