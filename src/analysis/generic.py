@@ -36,19 +36,19 @@ class Generic(object) :
         """
 
          #labels = np.unique(submission.submission[on])
-         totals, correct_predictions_n, results = get_plotting_info_from_col(submission, feature = on)
+        totals, correct_predictions_n, results = get_plotting_info_from_col(submission, feature = on)
           
           # plot the bar graph
-         if plot:
+        if plot:
              plot_bar_graph(totals.index, totals, correct_predictions_n, 
                               title = str("Predictions on " + on))
           #get examples
-         if show_examples:
+        if show_examples:
              plot_info = get_examples(submission, on, results)
           
-         metrics = get_metrics(submission, on)    
+        metrics = get_metrics(submission, on)    
          
-         return plot_info, metrics
+        return plot_info, metrics
 
     @classmethod
     def analyze_on(cls, submission:DatasetSubmissionObject, 
@@ -195,6 +195,7 @@ class Generic(object) :
     @staticmethod
     def str_len_analysis(submission:DatasetSubmissionObject,
                          hist_bins = 10,
+                         analysis_type = "character",
                          plot=True,
                          show_examples=False,
                          ):
@@ -203,6 +204,7 @@ class Generic(object) :
         Args:
             submission (DatasetSUbmissionObject): submission object to use, containing df
             hist_bins (int): number of bins to use for the histogram
+            analysis_type (str) : options are ["charcter", "word", "word_len"] for character count, word count, or avg characters per word
             plot (boolean): to plot or not to plot
             show_examples (boolean): to show examples of instances the model predicted incorrectly or not
                                     (WARNING: LIKELY CONTAINS OFFENSIVE LANGUAGE)
@@ -213,12 +215,20 @@ class Generic(object) :
             metrics (df): classification report for each category
         """  
         #add new feature
-        new_feature = "Text Length Bin"
-        submission.submission[new_feature] = submission.submission[submission.text_column].apply(len)
+        if analysis_type == "character":
+            new_feature = "Character Count"
+            submission.submission[new_feature] = submission.submission[submission.text_column].apply(len)
+        elif analysis_type == "word":
+            new_feature = 'Word Count'
+            submission.submission[new_feature] = submission.submission[submission.text_column].str.split().apply(len)
+        else:
+            new_feature = "Average Characters per Word"
+            submission.submission[new_feature] = [np.average([len(i) for i in row])for row in submission.submission[submission.text_column].str.split()]
+       
         correct_preds = submission.submission[(submission.submission[submission.prediction_column] ==submission.submission[submission.label_column])]
-        
+            
         if plot:
-            plot_histogram(title = "Predictions on Different Text Lengths", 
+            plot_histogram(title = str("Predictions on " + new_feature), 
                            hist_bins = hist_bins,
                            xlabel = "Text Length",
                            list_of_values =  submission.submission[new_feature],
@@ -254,7 +264,7 @@ class Generic(object) :
         if show_examples:
             results = get_examples(submission, new_feature, results,sort_list = True)
 
-        metrics = get_metrics(submission,submission.label_column,new_feature)
+        metrics = get_metrics(submission,new_feature)
         
         return results,metrics
     
@@ -316,6 +326,8 @@ class Generic(object) :
         #get_metrics
         # metrics = get_metrics(full_df, off_col,new_feature)
         # return results, metrics
+    
+    
     
     
 if __name__ == '__main__' : 
