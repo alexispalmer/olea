@@ -14,7 +14,6 @@ The datasets currently available with OLEA:
 (Insert requirements for installation)
 
 ### Install
-(Insert code for installation)
 ```sh
 pip install olea
 ```
