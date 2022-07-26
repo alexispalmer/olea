@@ -39,7 +39,24 @@ class HateCheckAnalysis(object) :
 
     @classmethod
     def _run_analysis_on_functionality(cls, submission:HateCheckSubmissionObject, on:Union[str,List[str]],show_examples,plot) :
-    
+        """helper function for running analysis on a category, a list of categories, or over all categories. Returns two dataframes. plot_info corresponds to 
+            information that is plotted, number of offensive/non offensive instances for each category in "on" as well as
+            accuracy of model. Metrics returns the classification report for each category specified on "on"
+
+        Args:
+            submission (COLDSubmissionObject): submission object to run analysis on
+            on (str or List of str): what to run analysis on : "category" for all categories, a specific category name as defined in 
+                class (eg: 'threats'), or list of categories (eg: ['threats','slurs'])
+            plot (boolean): to plot results or not
+            show_examples (boolean): to return examples or not
+
+        Returns:
+            plot_info (df) : results corresponding to plotted information:(total instances for each category,
+                             total correctly predicted, and accuracy)
+            metrics (df): classification report for each category
+        """
+        
+        #create the categories as defined in class - use reverse dictionary lookup to assign fine graiend labels to broader categories
         if type(on) == str and on == "category":
             new_dic = {}
             for k,v in cls.categories.items():
@@ -50,6 +67,7 @@ class HateCheckAnalysis(object) :
             return Generic.analyze_on(submission, on, show_examples, plot)
         
         
+        # analyze on one of the categories
         if type(on) ==str and on in cls.categories : 
             #on is a str of one category
            df1 = submission.submission[submission.submission['functionality'].isin(cls.categories[on])]
@@ -58,8 +76,8 @@ class HateCheckAnalysis(object) :
            #analysis_set = submission.submission[submission.submission['functionality'].isin(cls.categories[on])]
            #find instances of feature vs not feture
            
-        if set(on) <= cls.categories.keys():
-            #On is a list of categories            
+        #Analyze on a list of categories    
+        if set(on) <= cls.categories.keys():       
             categories = []
             for f in on:
                 for x in cls.categories[f]:
@@ -91,6 +109,22 @@ class HateCheckAnalysis(object) :
         #                    column = None)
     @classmethod
     def analyze_on(cls, hatecheck_submission:HateCheckSubmissionObject, on:Union[str, List[str]], show_examples = True, plot =True) : 
+        """function for running analysis on a category, a list of categories, or over all categories. Returns two dataframes. plot_info corresponds to 
+            information that is plotted, number of offensive/non offensive instances for each category in "on" as well as
+            accuracy of model. Metrics returns the classification report for each category specified on "on"
+
+        Args:
+            submission (COLDSubmissionObject): submission object to run analysis on
+            on (str or List of str): what to run analysis on : "category" for all categories, a specific category name as defined in 
+                class (eg: 'threats'), or list of categories (eg: ['threats','slurs'])
+            plot (boolean): to plot results or not
+            show_examples (boolean): to return examples or not
+
+        Returns:
+            plot_info (df) : results corresponding to plotted information:(total instances for each category,
+                             total correctly predicted, and accuracy)
+            metrics (df): classification report for each category
+        """
         return cls._run_analysis_on_functionality(hatecheck_submission, on, show_examples, plot)
 
     # @classmethod
