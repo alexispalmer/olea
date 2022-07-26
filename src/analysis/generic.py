@@ -36,7 +36,7 @@ class Generic(object) :
         """
 
          #labels = np.unique(submission.submission[on])
-        totals, correct_predictions_n, results = get_plotting_info_from_col(submission, feature = on)
+        totals, correct_predictions_n, plot_info = get_plotting_info_from_col(submission, feature = on)
           
           # plot the bar graph
         if plot:
@@ -44,7 +44,7 @@ class Generic(object) :
                               title = str("Predictions on " + on))
           #get examples
         if show_examples:
-             plot_info = get_examples(submission, on, results)
+             plot_info = get_examples(submission, on, plot_info)
           
         metrics = get_metrics(submission, on)    
          
