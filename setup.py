@@ -1,43 +1,44 @@
-# Format taken from:
-# https://www.freecodecamp.org/news/build-your-first-python-package/
-# We will change this as the project evolves
-# See also:
-# https://python-packaging-tutorial.readthedocs.io/en/latest/setup_py.html
-# https://python-packaging.readthedocs.io/en/latest/
-
 from setuptools import setup, find_packages
 
-# I suggest we tie the version number to the date of the last commit
-# Something like a YEAR.MONTH format
-# If there are multiple updates in the same month, denote it with a 
-# letter, e.g. 2022.05.a
+VERSION = '0.0.1' 
+AUTHORS = 'OLEA Team, Anonymized for Review'
+DESCRIPTION = 'Short OLEA description'
+LONG_DESCRIPTION = 'Longer OLEA description'
 
-VERSION = '2022.05' 
-AUTHORS = 'Alexis Palmer, Dananjay Srinivas, Marie Grace, Jay Seabrum'
-DESCRIPTION = 'Short COLD description'
-LONG_DESCRIPTION = 'Longer COLD description'
+print('Finding packages...')
+print(find_packages(where='olea' , 
+                    exclude=['unittests*' , 'experiments*']))
+
+# find_packages(where='src' , 
+#                                 exclude=['unittests*' , 'experiments*'])
 
 # Setting up
 setup(
-       # The setup will come from the src directory
-        name = "src", 
+        name = "olea", 
         version = VERSION,
         author = AUTHORS,
-        # TODO: Discuss if Alexis' email should be the only one here. Or if we want to include an email at all
-        author_email = "<youremail@email.com>",
+        author_email = "<olea.ask@gmail.com>",
         description = DESCRIPTION,
         long_description = LONG_DESCRIPTION,
-        packages = find_packages(),
-        install_requires = [], # add any additional packages that 
-        # needs to be installed along with your package. Eg: 'caer'
+        packages = ['olea'],
+        install_requires = ['numpy>1.21.0' , 
+                            'scipy>1.6.0' , 
+                            'datasets>2.2.0' , 
+                            'matplotlib>3.0' , 
+                            'pandas>1.2.0' , 
+                            'Pillow>8.0.0' , 
+                            'scikit-learn>1.0' , 
+                            'emoji>1.0',
+                            'wordsegment>1.3'
+                            ], 
         
-        # TODO: How we want to have the tag system find our package. 
-        keywords = ['python', 'first package'],
+        keywords = ['python' , 
+                    'linguistics',
+                    'linguistic-analysis'],
         
         classifiers = [
             "Development Status :: 3 - Alpha",
             "Intended Audience :: Education",
-            "Programming Language :: Python :: 2",
             "Programming Language :: Python :: 3",
             "Operating System :: MacOS :: MacOS X",
             "Operating System :: Microsoft :: Windows",
