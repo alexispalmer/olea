@@ -36,12 +36,11 @@ class Generic(object) :
         """
 
          #labels = np.unique(submission.submission[on])
-        totals, correct_predictions_n, plot_info = get_plotting_info_from_col(submission, feature = on)
+        plot_info = get_plotting_info_from_col(submission, feature = on)
           
           # plot the bar graph
         if plot:
-             plot_bar_graph(totals.index, totals, correct_predictions_n, 
-                              title = str("Predictions on " + on))
+             plot_bar_graph(plot_info, title = str("Predictions on " + on))
           #get examples
         if show_examples:
              plot_info = get_examples(submission, on, plot_info)
@@ -194,8 +193,8 @@ class Generic(object) :
 
     @staticmethod
     def str_len_analysis(submission:DatasetSubmissionObject,
-                         hist_bins = 10,
                          analysis_type = "character",
+                         hist_bins = 10,
                          plot=True,
                          show_examples=False,
                          ):
@@ -227,13 +226,6 @@ class Generic(object) :
        
         correct_preds = submission.submission[(submission.submission[submission.prediction_column] ==submission.submission[submission.label_column])]
             
-        if plot:
-            plot_histogram(title = str("Predictions on " + new_feature), 
-                           hist_bins = hist_bins,
-                           xlabel = "Text Length",
-                           list_of_values =  submission.submission[new_feature],
-                           correct_preds = correct_preds[new_feature])
-        
         bins, bin_vals, bin_vals_correct = histogram_values(submission.submission[new_feature],
                                                 correct_preds[new_feature])
         #combine histogram info for printing
@@ -247,7 +239,14 @@ class Generic(object) :
             else:
                 percents.append(0)
             i+=1
-        
+            
+        if plot:
+            plot_histogram(title = str("Predictions on " + new_feature), 
+                           hist_bins = hist_bins,
+                           xlabel = "Text Length",
+                           list_of_values =  submission.submission[new_feature],
+                           correct_preds = correct_preds[new_feature],
+                           accuracy = percents)
         #reformat bins for clarity
         new_feature_list = []
         for tl in submission.submission[new_feature]:

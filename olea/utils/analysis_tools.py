@@ -171,7 +171,7 @@ def __remove_nonsensical_labels(m_dict, df_subset,off_col,off_labels):
     # percents = [a/b if b else 0 for a,b in zip(correct_predictions_n, totals)]
     # results = pd.DataFrame({"Full Agreement" : ["Y","N"],"Total_Correct_Predictions": correct_predictions_n, "Total": totals,"Accuracy": percents})
     
-    return totals, correct_predictions_n, results, full_df
+   # return totals, correct_predictions_n, results, full_df
 
 def get_plotting_info_from_col(submission, feature):
     """calculates info from a dataframe for metrics and plotting usage using labels from the feature parameter.
@@ -205,5 +205,5 @@ def get_plotting_info_from_col(submission, feature):
     results = results.reset_index()
     results = results.rename(columns = {'index':feature})
     
-    return totals, correct_predictions_n,results
+    return results
     

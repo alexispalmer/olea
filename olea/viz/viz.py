@@ -2,18 +2,24 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def plot_bar_graph(labels, totals, correct_predictions,
-                   title, rot = 0, xlabel = ""):
+def plot_bar_graph(plot_info, title, rot = 0, xlabel = ""):
     """Plots bar graph for different analyses
 
     Args:
-        labels (list): labels to be used for x axis
-        totals (list): number of total instances for each category
-        correct_predictions (list): number of correctly predicted instances for each category
+        plot info (df): containing the following columns
+            Total (list): number of total instances for each category
+            Total_Correct_Predictions (list): number of correctly predicted instances for each category
+            accuracy (list): accuracy of total_correct_predictions/ total
         title (str): title of graph
         rot (int): rotation for x-axis ticks
         xlabel (str): x label
     """
+    
+    labels = plot_info.iloc[:,0] 
+    totals = plot_info["Total"]
+    correct_predictions = plot_info["Total_Correct_Predictions"]
+    accuracy = plot_info["Accuracy"]
+    
     ha = "center"
     fsize=10
     if len(labels) >2:
@@ -21,10 +27,20 @@ def plot_bar_graph(labels, totals, correct_predictions,
         ha = "right"
         if len(labels) >12:
             fsize= 8
+     
         
-    plt.bar(labels, totals, color = "red", label = "Total", edgecolor='black')
-    ax = plt.bar(labels, correct_predictions, color = "blue", 
+    fig, ax = plt.subplots()
+    ax.bar(labels, totals, color = "red", label = "Total", edgecolor='black')
+    ax.bar(labels, correct_predictions, color = "blue", 
                  label = "Correct Predicitons", edgecolor = 'black')
+    
+    
+    # Set an offset that is used to bump the label up a bit above the bar.
+    y_offset = 4
+    # Add labels to each bar.
+    for i, total in enumerate(totals):
+      ax.text(totals.index[i], total + y_offset, str(round(accuracy[i]*100,1)) + "%", ha='center')
+    
     plt.legend()
     plt.title(title)
     plt.xticks(ticks = np.arange(labels.shape[0]), labels = labels, rotation = rot,ha=ha, rotation_mode='anchor')
@@ -33,17 +49,28 @@ def plot_bar_graph(labels, totals, correct_predictions,
     plt.ylabel("Number of Instances")
     plt.show()
 
-def plot_histogram(hist_bins = 10,legend_location = 'upper right', title = "", 
+def plot_histogram(title = "",hist_bins = 10,legend_location = 'upper right', 
                    xlabel = "", ylabel = "Num. of Instances", 
                    list_of_values = [], 
                    correct_preds = [],
+                   accuracy = []
                    ):
-    _, bins, _ = plt.hist(list_of_values,bins=hist_bins, color="red", 
+    
+    fig, ax = plt.subplots()
+    a, bins, _ = ax.hist(list_of_values,bins=hist_bins, color="red", 
                         label = "Total",edgecolor='black')
-    _, _, _ = plt.hist(correct_preds,bins = bins, 
+    _, _, _ = ax.hist(correct_preds,bins = bins, 
                         color="blue", 
                         label = "Correct Prediciton", 
                         edgecolor='black')
+    
+    # Set an offset that is used to bump the label up a bit above the bar.
+    y_offset = 4
+    # Add labels to each bar.
+    for i, total in enumerate(a):
+      ax.text((bins[i] + bins[i+1])/2, total + y_offset, str(round(accuracy[i]*100,1)) + "%", ha='center')
+    
+    
     plt.legend(loc = legend_location)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
