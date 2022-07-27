@@ -3,7 +3,11 @@ from setuptools import setup, find_packages
 VERSION = '0.0.8' 
 AUTHORS = 'OLEA Team, Anonymized for Review'
 DESCRIPTION = 'Short OLEA description'
-LONG_DESCRIPTION = 'Longer OLEA description'
+
+
+with open('README.md') as f : 
+    LONG_DESCRIPTION = f.read()
+
 
 print('Finding packages...')
 print(find_packages(where='.' , 
