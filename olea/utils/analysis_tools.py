@@ -76,8 +76,8 @@ def get_metrics(submission, column, cats_based_on_labels = False):
         for value in column_vals:
             df_subset = df.loc[df[column] == value]
             # my_metric = Metrics(df_subset[off_col],df_subset["preds"])
-            m_dict = Metrics.get_metrics_dictionary(y_true = df[off_col], 
-                                                    y_pred = df[preds])
+            m_dict = Metrics.get_metrics_dictionary(y_true = df_subset[off_col], 
+                                                    y_pred = df_subset[preds])
             del m_dict["accuracy"] #remove accuracy metric, can be viewed elsewhere
             
             if cats_based_on_labels:
