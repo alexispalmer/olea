@@ -1,6 +1,8 @@
 'Testing different HuggingFace models on the datasets'
 
-from olea.data.cold import COLD
+
+from olea.data.cold import COLD, COLDSubmissionObject
+
 from olea.analysis.cold import COLDAnalysis
 from olea.analysis.generic import Generic
 from olea.analysis.hatecheck import HateCheckAnalysis
