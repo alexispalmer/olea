@@ -14,7 +14,8 @@ def plot_bar_graph(plot_info, title, rot = 0, xlabel = ""):
         rot (int): rotation for x-axis ticks
         xlabel (str): x label
     """
-    
+    if plot_info.shape[0] > 2:
+        plot_info= plot_info.sort_values(by = "Total",axis = 0,ignore_index =True)
     labels = plot_info.iloc[:,0] 
     totals = plot_info["Total"]
     correct_predictions = plot_info["Total_Correct_Predictions"]
@@ -41,7 +42,7 @@ def plot_bar_graph(plot_info, title, rot = 0, xlabel = ""):
     for i, total in enumerate(totals):
       ax.text(totals.index[i], total + y_offset, str(round(accuracy[i]*100,1)) + "%", ha='center')
     
-    plt.legend()
+    plt.legend(prop={'size': 8})
     plt.title(title)
     plt.xticks(ticks = np.arange(labels.shape[0]), labels = labels, rotation = rot,ha=ha, rotation_mode='anchor')
     plt.tick_params(axis='x', labelsize=fsize)
@@ -71,7 +72,7 @@ def plot_histogram(title = "",hist_bins = 10,legend_location = 'upper right',
       ax.text((bins[i] + bins[i+1])/2, total + y_offset, str(round(accuracy[i]*100,1)) + "%", ha='center')
     
     
-    plt.legend(loc = legend_location)
+    plt.legend(loc = legend_location,prop={'size': 8})
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.title(title)
