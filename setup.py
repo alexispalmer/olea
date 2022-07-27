@@ -25,6 +25,7 @@ setup(
         author_email = "<olea.ask@gmail.com>",
         description = DESCRIPTION,
         long_description = LONG_DESCRIPTION,
+        long_description_content_type='text/markdown',
         packages = find_packages(where='.' , 
                     include=['olea*'] , 
                     exclude=['*unittests*' , '* experiments*']),
