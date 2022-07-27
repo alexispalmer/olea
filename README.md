@@ -14,35 +14,33 @@ The datasets currently available with OLEA:
 (Insert requirements for installation)
 
 ### Install
-(Insert code for installation)
 ```sh
-
+pip install olea
 ```
 
-
 ## Getting Started
-The user provides a pre-trained hate speech detection model and predicts it on an OLEA-supported dataset. The user can then apply different analyses to their predictions to gain insight into what cases their model fails on. 
+The user provides a pre-trained hate speech detection model and predicts it on an OLEA-supported dataset. The user can then apply different analyses to their predictions to gain insight into what cases their model fails on. Consider this introductory example
 
 1. Import Statements
 ```sh
+from olea.data.cold import COLD, COLDSubmissionObject
+from olea.analysis.cold import COLDAnalysis
 
-```
-2. Downloading the data
-```sh
-cold = COLD()
-```
-3. Predicting on the dataset (Example model is HateXplain downloaded from HuggingFace)
-```sh
 #import statements for downloading example model
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from transformers import TextClassificationPipeline
 ```
+2. Downloading the data
 ```sh
+#Load Dataset
+cold = COLD()
+
 #Load Model
 link = "Hate-speech-CNERG/bert-base-uncased-hatexplain"
 tokenizer = AutoTokenizer.from_pretrained(link)
 model = AutoModelForSequenceClassification.from_pretrained(link)
 ```
+3. Predicting on the dataset (Example model is HateXplain downloaded from HuggingFace)
 ```sh
 #Predict on COLD
 pipe = TextClassificationPipeline(model=model, tokenizer=tokenizer)
@@ -55,11 +53,51 @@ submission = cold.submit(cold.data(), preds, map=hate_map)
 ```
 5. Choose an analysis 
 ```sh
-results = Generic.aave(submission)
+plot_info, metrics = COLDAnalysis.analyze_on(submission,'Cat',show_examples = True)
 ```
 
 ## Analysis
 OLEA provides generic analysis that can be applied to any NLP classification task, by evaluating performance based on a subset of the data. This can be applied to text length, and text containing certain strings, and text determined to be written in AAVE (Blodgett et al., 2016). OLEA also provides analysis specific to COLD, showing model performance on different levels of annotator agreement of offensiveness and analysis of the fine-grained categories outlined in Palmer et al. The analysis provides metrics of F1, precision, and recall for each subset of data. 
+
+Generic Analysis includes:
+
+-   `analyze_on` for evaluating model performance on any specified
+    categorical column.
+
+-   `check_substring` for evaluating model performance on presence of a
+    specified substring in text
+
+-   `aave` for evaluating how the model predicts on instances that are
+    written using African American Vernacular English. The scores are
+    calculated using the TwitterAAE model
+    (Blodgett et al., 2016). These scores represent an
+    inference of the proportion of words in the text that come from a
+    demographically-associated language/dialect.
+
+-   `str_len_analysis` for evaluating how the model performs on
+    instances of different character or word lengths using a histogram.
+
+-   `check_anno_agreement` for evaluating model performance on
+    instances with full annotator agreement on the offensiveness of a
+    text (\"Y\",\"Y\",\"Y\") or (\"N\",\"N\",\"N\") vs instances with
+    partial agreement. This should indicate \"easy\" (full) vs
+    \"difficult\" (partial) cases.
+
+The COLD-specific analysis includes:
+
+-   `analyze_on` for evaluating model performance on the COLD specific
+    categories outlined in (Palmer et al., 2020). These categories are
+    constructed from offensiveness, presence of adjectival
+    nomanilization, presence of slur, and presence of linguistic
+    distancing.
+
+The HateCheck-specifc analysis includes:
+
+-   `analyze_on` for evaluating model performance on the HateCheck
+    specific categories outlined in (Röttger et al., 2021). Some
+    categories included are negation, counter, derogation, and
+    profanity.
+
 
 
 ## Contact
