@@ -65,9 +65,9 @@ def get_submission (model_name: str, dataset_name :str):
 
     #create submission object
     if dataset_name == "COLD":
-        submission = cold.submit(dataset.data(), preds, map=MODELS[model_name]["map"])
+        submission = dataset.submit(dataset.data(), preds, map=MODELS[model_name]["map"])
     elif dataset_name == "Hatecheck":
-        submission = hc.submit(dataset.data(), preds, map=MODELS[model_name]["map"])
+        submission = dataset.submit(dataset.data(), preds, map=MODELS[model_name]["map"])
     
     return submission
 
