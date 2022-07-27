@@ -38,23 +38,21 @@ def get_submission (model_name: str, dataset_name :str):
     #Load in COLD
     
     if dataset_name == "COLD":
-        cold = COLD()
-        dataset = cold._data
+        dataset = COLD()
         text_label = "Text"
         
     elif dataset_name == "Hatecheck":
-        hc = HateCheck()
-        dataset = hc.data()
+        dataset= HateCheck()
         text_label = "test_case"
         
     pt = preprocess_text.PreprocessText()
-    processed_text = pt.execute(dataset[text_label])
-    dataset[text_label] =processed_text
+    processed_text = pt.execute(dataset.data()[text_label])
+    dataset.data()[text_label] =processed_text
     
           
     
     if model_name == "Random_HC" or model_name == "Random_COLD":
-        num_preds = dataset.shape[0]
+        num_preds = dataset.data().shape[0]
         preds = np.random.choice([True, False], size=num_preds)
     else:
         #load in model infomation
@@ -62,14 +60,14 @@ def get_submission (model_name: str, dataset_name :str):
         model = AutoModelForSequenceClassification.from_pretrained(MODELS[model_name]["link"])
         #Create Pipeline for Predicting
         pipe = TextClassificationPipeline(model=model, tokenizer=tokenizer)
-        predicted = pd.DataFrame(pipe(list(dataset[text_label])))
+        predicted = pd.DataFrame(pipe(list(dataset.data()[text_label])))
         preds = predicted.label
 
     #create submission object
     if dataset_name == "COLD":
-        submission = cold.submit(cold.data(), preds, map=MODELS[model_name]["map"])
+        submission = cold.submit(dataset.data(), preds, map=MODELS[model_name]["map"])
     elif dataset_name == "Hatecheck":
-        submission = hc.submit(dataset, preds, map=MODELS[model_name]["map"])
+        submission = hc.submit(dataset.data(), preds, map=MODELS[model_name]["map"])
     
     return submission
 
