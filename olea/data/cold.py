@@ -20,7 +20,7 @@ class COLD(Dataset) :
 
     def _load_data(self) -> pd.DataFrame:
         print('Loading data...')
-        return load_dataset(self.URL,sep='\t')[self.split].to_pandas()
+        return load_dataset(self.URL)[self.split].to_pandas()
 
     def submit(self, dataset: pd.DataFrame, submission: iter, map: dict = None) -> DatasetSubmissionObject:
         submission_df = super().submit(dataset, submission, map)
