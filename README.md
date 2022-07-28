@@ -12,14 +12,14 @@ The datasets currently available with OLEA:
 ## Local Installation
 ### Requirements
 ```
-'numpy>1.21.0' , 
-'scipy>1.6.0' , 
-'datasets>2.2.0' , 
-'matplotlib>3.0' , 
-'pandas>1.2.0' , 
-'Pillow>8.0.0' , 
-'scikit-learn>1.0' , 
-'emoji>1.0',
+'numpy>1.21.0'  
+'scipy>1.6.0'  
+'datasets>2.2.0'  
+'matplotlib>3.0'  
+'pandas>1.2.0'  
+'Pillow>8.0.0'  
+'scikit-learn>1.0'  
+'emoji>1.0'
 'wordsegment>1.3'
 ```
 
