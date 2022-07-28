@@ -11,7 +11,15 @@ The datasets currently available with OLEA:
 
 ## Local Installation
 ### Requirements
-(Insert requirements for installation)
+'numpy>1.21.0' , 
+'scipy>1.6.0' , 
+'datasets>2.2.0' , 
+'matplotlib>3.0' , 
+'pandas>1.2.0' , 
+'Pillow>8.0.0' , 
+'scikit-learn>1.0' , 
+'emoji>1.0',
+'wordsegment>1.3'
 
 ### Install
 ```sh
@@ -101,7 +109,8 @@ The HateCheck-specifc analysis includes:
 
 
 ## Contact
-Please contact Alexis Palmer (Alexis.Palmer@colorado.edu), Dananjay Srinivas (Dananjay.Srinivas@colorado.edu), Marie Grace (Marie.Grace@colorado.edu), or Jay Seabrum (Xajavion.Seabrum@colorado.edu)
+Marie Grace, Jay Seabrum, Dananjay Srinivas, and Alexis Palmer all contributed to this library. 
+Please contact olea.ask@gmail.com for further inquiries. 
 
 ## Resources
 
