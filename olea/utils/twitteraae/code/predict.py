@@ -2,8 +2,13 @@ from __future__ import division
 import numpy as np
 import sys,os
 
-vocabfile = "olea/utils/twitteraae/model/model_vocab.txt"
-modelfile = "olea/utils/twitteraae/model/model_count_table.txt"
+
+
+model_directory = os.path.dirname(os.path.abspath(__file__)).replace('code' , 'model')
+
+
+vocabfile = os.path.join(model_directory , 'model_vocab.txt')   
+modelfile = os.path.join(model_directory , 'model_count_table.txt')
 
 K=0; wordprobs=None; w2num=None
 
