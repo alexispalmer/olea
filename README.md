@@ -11,6 +11,7 @@ The datasets currently available with OLEA:
 
 ## Local Installation
 ### Requirements
+```
 'numpy>1.21.0' , 
 'scipy>1.6.0' , 
 'datasets>2.2.0' , 
@@ -20,6 +21,7 @@ The datasets currently available with OLEA:
 'scikit-learn>1.0' , 
 'emoji>1.0',
 'wordsegment>1.3'
+```
 
 ### Install
 ```sh
