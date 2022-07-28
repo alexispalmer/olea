@@ -23,17 +23,17 @@ class HateCheckAnalysis(object) :
                     'spell_char_swap_h', 'spell_char_del_h', 'spell_space_del_h',
                     'spell_space_add_h', 'spell_leet_h']
 
-    categories = {'derogation' : ['derog_neg_emote_h', 'derog_neg_attrib_h', 'derog_dehum_h', 'derog_impl_h'], 
+    categories = {'derogation (h)' : ['derog_neg_emote_h', 'derog_neg_attrib_h', 'derog_dehum_h', 'derog_impl_h'], 
                 'threats' : ['threat_dir_h', 'threat_norm_h'],
                 'slurs':['slur_h', 'slur_homonym_nh', 'slur_reclaimed_nh'],
                 'profanity' : ['profanity_h', 'profanity_nh'], 
                 'pronoun_references':['ref_subs_clause_h','ref_subs_sent_h'], 
                 'negation':['negate_pos_h', 'negate_neg_nh'], 
-                'phrasing' : ['phrase_question_h','phrase_opinion_h'], 
-                'identity' : ['ident_neutral_nh', 'ident_pos_nh'],
-                'counter' : ['counter_quote_nh','counter_ref_nh'],
-                'nonhateful-abuse' : ['target_obj_nh', 'target_indiv_nh', 'target_group_nh'],
-                'hateful-abuse' : ['spell_char_swap_h', 'spell_char_del_h', 'spell_space_del_h',
+                'phrasing (h)' : ['phrase_question_h','phrase_opinion_h'], 
+                'identity(nh)' : ['ident_neutral_nh', 'ident_pos_nh'],
+                'counter (nh)' : ['counter_quote_nh','counter_ref_nh'],
+                'nonhateful-abuse (nh)' : ['target_obj_nh', 'target_indiv_nh', 'target_group_nh'],
+                'spelling changes (h)' : ['spell_char_swap_h', 'spell_char_del_h', 'spell_space_del_h',
                                 'spell_space_add_h', 'spell_leet_h']
                 }
 
