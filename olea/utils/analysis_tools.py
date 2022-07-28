@@ -132,8 +132,9 @@ def __remove_nonsensical_labels(m_dict, df_subset,off_col,off_labels):
         label_to_drop = off_labels[1]
     else:
         label_to_drop = off_labels[0]
-    for key in m_dict[label_to_drop]:
-        m_dict[label_to_drop][key] = '-'
+    if label_to_drop in m_dict:
+        for key in m_dict[label_to_drop]:
+            m_dict[label_to_drop][key] = '-'
         
     return m_dict
 
