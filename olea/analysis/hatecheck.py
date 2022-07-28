@@ -44,7 +44,7 @@ class HateCheckAnalysis(object) :
             accuracy of model. Metrics returns the classification report for each category specified on "on"
 
         Args:
-            submission (COLDSubmissionObject): submission object to run analysis on
+            submission (HateCheckSubmissionObject): submission object to run analysis on
             on (str or List of str): what to run analysis on : "category" for all categories, a specific category name as defined in 
                 class (eg: 'threats'), or list of categories (eg: ['threats','slurs'])
             plot (boolean): to plot results or not
