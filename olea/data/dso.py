@@ -15,6 +15,8 @@ class DatasetSubmissionObject(object) :
         self.submission = submission_df
         self.prediction_column = 'preds'
 
+    def data(self) : 
+        return self.submission
 
     def filter_submission(self, on:str, filter:callable, **kwargs)  : 
         pass
