@@ -23,7 +23,7 @@ class Metrics:
     def classification_report(y_true, y_pred) -> None:
         """Prints out the classification report to console.
         """
-        print(classification_report(y_true, y_pred, digits = 4))
+        print(classification_report(y_true, y_pred, digits = 4,zero_division=0))
 
     @staticmethod   
     def get_metrics_dictionary(y_true, y_pred) -> dict:
@@ -35,7 +35,8 @@ class Metrics:
         """
         return classification_report(y_true, y_pred, 
                                      digits = 4, 
-                                     output_dict = True)
+                                     output_dict = True,
+                                     zero_division = 0)
 
     @classmethod
     def __assert_equal_length(cls) -> None:
