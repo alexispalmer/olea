@@ -36,12 +36,11 @@ class Generic(object) :
         """
 
          #labels = np.unique(submission.submission[on])
-        totals, correct_predictions_n, plot_info = get_plotting_info_from_col(submission, feature = on)
+        plot_info = get_plotting_info_from_col(submission, feature = on)
           
           # plot the bar graph
         if plot:
-             plot_bar_graph(totals.index, totals, correct_predictions_n, 
-                              title = str("Predictions on " + on))
+             plot_bar_graph(plot_info, title = str("Predictions on " + on))
           #get examples
         if show_examples:
              plot_info = get_examples(submission, on, plot_info)
@@ -98,8 +97,8 @@ class Generic(object) :
             metrics (df): classification report for each category
         """ 
         #find instances of substring/ vs no substring
-        df1 = submission.submission[submission.submission[submission.text_column].str.contains(substring)]
-        df2 = submission.submission[~submission.submission[submission.text_column].str.contains(substring)]
+        df1 = submission.submission.loc[submission.submission[submission.text_column].str.contains(substring)].copy()
+        df2 = submission.submission.loc[~submission.submission[submission.text_column].str.contains(substring)].copy()
         
         #create new column
         new_feature = ''.join(["Containing ", '\'',substring, '\''])
@@ -157,8 +156,8 @@ class Generic(object) :
         #get aave values
         aave_values = detection.get_aave_values(submission)
         submission.submission["AAVE"] = aave_values
-        df1 = submission.submission[submission.submission['AAVE'] >= threshold]
-        df2 = submission.submission[submission.submission['AAVE'] < threshold]
+        df1 = submission.submission.loc[submission.submission['AAVE'] >= threshold].copy()
+        df2 = submission.submission.loc[submission.submission['AAVE'] < threshold].copy()
         
         #create new column
         new_feature = "AAVE-thresh >= " + str(threshold) #Add in new feature with labels for metrics
@@ -194,8 +193,8 @@ class Generic(object) :
 
     @staticmethod
     def str_len_analysis(submission:DatasetSubmissionObject,
-                         hist_bins = 10,
                          analysis_type = "character",
+                         hist_bins = 10,
                          plot=True,
                          show_examples=False,
                          ):
@@ -227,13 +226,6 @@ class Generic(object) :
        
         correct_preds = submission.submission[(submission.submission[submission.prediction_column] ==submission.submission[submission.label_column])]
             
-        if plot:
-            plot_histogram(title = str("Predictions on " + new_feature), 
-                           hist_bins = hist_bins,
-                           xlabel = "Text Length",
-                           list_of_values =  submission.submission[new_feature],
-                           correct_preds = correct_preds[new_feature])
-        
         bins, bin_vals, bin_vals_correct = histogram_values(submission.submission[new_feature],
                                                 correct_preds[new_feature])
         #combine histogram info for printing
@@ -247,7 +239,14 @@ class Generic(object) :
             else:
                 percents.append(0)
             i+=1
-        
+            
+        if plot:
+            plot_histogram(title = str("Predictions on " + new_feature), 
+                           hist_bins = hist_bins,
+                           xlabel = "Text Length",
+                           list_of_values =  submission.submission[new_feature],
+                           correct_preds = correct_preds[new_feature],
+                           accuracy = percents)
         #reformat bins for clarity
         new_feature_list = []
         for tl in submission.submission[new_feature]:
@@ -293,9 +292,9 @@ class Generic(object) :
 
         """
         #full agreement is considered the "easy case"
-        df1 = submission.submission[submission.submission[anno_columns].eq(submission.submission[anno_columns].iloc[:, 0], axis=0).all(axis=1)]
+        df1 = submission.submission.loc[submission.submission[anno_columns].eq(submission.submission[anno_columns].iloc[:, 0], axis=0).all(axis=1)].copy()
         #not full agreement is considered the more difficult case"
-        df2 = submission.submission[~submission.submission.loc[:].isin(df1.loc[:])].dropna()
+        df2 = submission.submission[~submission.submission.loc[:].isin(df1.loc[:])].copy().dropna()
         
         
         #create new column

@@ -23,17 +23,17 @@ class HateCheckAnalysis(object) :
                     'spell_char_swap_h', 'spell_char_del_h', 'spell_space_del_h',
                     'spell_space_add_h', 'spell_leet_h']
 
-    categories = {'derogation' : ['derog_neg_emote_h', 'derog_neg_attrib_h', 'derog_dehum_h', 'derog_impl_h'], 
+    categories = {'derogation (h)' : ['derog_neg_emote_h', 'derog_neg_attrib_h', 'derog_dehum_h', 'derog_impl_h'], 
                 'threats' : ['threat_dir_h', 'threat_norm_h'],
                 'slurs':['slur_h', 'slur_homonym_nh', 'slur_reclaimed_nh'],
                 'profanity' : ['profanity_h', 'profanity_nh'], 
                 'pronoun_references':['ref_subs_clause_h','ref_subs_sent_h'], 
                 'negation':['negate_pos_h', 'negate_neg_nh'], 
-                'phrasing' : ['phrase_question_h','phrase_opinion_h'], 
-                'identity' : ['ident_neutral_nh', 'ident_pos_nh'],
-                'counter' : ['counter_quote_nh','counter_ref_nh'],
-                'nonhateful-abuse' : ['target_obj_nh', 'target_indiv_nh', 'target_group_nh'],
-                'hateful-abuse' : ['spell_char_swap_h', 'spell_char_del_h', 'spell_space_del_h',
+                'phrasing (h)' : ['phrase_question_h','phrase_opinion_h'], 
+                'identity(nh)' : ['ident_neutral_nh', 'ident_pos_nh'],
+                'counter (nh)' : ['counter_quote_nh','counter_ref_nh'],
+                'nonhateful-abuse (nh)' : ['target_obj_nh', 'target_indiv_nh', 'target_group_nh'],
+                'spelling changes (h)' : ['spell_char_swap_h', 'spell_char_del_h', 'spell_space_del_h',
                                 'spell_space_add_h', 'spell_leet_h']
                 }
 
@@ -44,7 +44,7 @@ class HateCheckAnalysis(object) :
             accuracy of model. Metrics returns the classification report for each category specified on "on"
 
         Args:
-            submission (COLDSubmissionObject): submission object to run analysis on
+            submission (HateCheckSubmissionObject): submission object to run analysis on
             on (str or List of str): what to run analysis on : "category" for all categories, a specific category name as defined in 
                 class (eg: 'threats'), or list of categories (eg: ['threats','slurs'])
             plot (boolean): to plot results or not
@@ -83,8 +83,8 @@ class HateCheckAnalysis(object) :
                 for x in cls.categories[f]:
                     categories.append(x)
             
-            df1 = submission.submission[submission.submission['functionality'].isin(categories)]
-            df2 = submission.submission[~submission.submission['functionality'].isin(categories)]
+            df1 = submission.submission.loc[submission.submission['functionality'].isin(categories)].copy()
+            df2 = submission.submission.loc[~submission.submission['functionality'].isin(categories)].copy()
             new_feature = str(", ").join(on)
             
         labels = [new_feature, str("Not " + new_feature)]

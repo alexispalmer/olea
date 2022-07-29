@@ -1,3 +1,9 @@
-from olea import data, analysis, metrics, utils, viz 
+from . import analysis, data, metrics, utils, viz
 
-__all__ = ["data" , "analysis", "metrics", "utils", "viz"]
+__all__ = [
+    'analysis' , 
+    'data' ,  
+    'metrics' , 
+    'utils' , 
+    'viz'    
+]

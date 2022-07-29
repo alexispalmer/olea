@@ -1,13 +1,18 @@
 from setuptools import setup, find_packages
 
-VERSION = '0.0.1' 
+VERSION = '0.0.9' 
 AUTHORS = 'OLEA Team, Anonymized for Review'
 DESCRIPTION = 'Short OLEA description'
-LONG_DESCRIPTION = 'Longer OLEA description'
+
+
+with open('README.md') as f : 
+    LONG_DESCRIPTION = f.read()
+
 
 print('Finding packages...')
-print(find_packages(where='olea' , 
-                    exclude=['unittests*' , 'experiments*']))
+print(find_packages(where='.' , 
+                    include=['olea*'] , 
+                    exclude=['*unittests*' , '*experiments*']))
 
 # find_packages(where='src' , 
 #                                 exclude=['unittests*' , 'experiments*'])
@@ -20,7 +25,12 @@ setup(
         author_email = "<olea.ask@gmail.com>",
         description = DESCRIPTION,
         long_description = LONG_DESCRIPTION,
-        packages = ['olea'],
+        long_description_content_type='text/markdown',
+        packages = find_packages(where='.' , 
+                    include=['olea*'] , 
+                    exclude=['*unittests*' , '* experiments*']),
+        package_data={'olea.utils.twitteraae' : ['model/*.txt']}, 
+        include_package_data=True,
         install_requires = ['numpy>1.21.0' , 
                             'scipy>1.6.0' , 
                             'datasets>2.2.0' , 

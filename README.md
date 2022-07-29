@@ -11,7 +11,17 @@ The datasets currently available with OLEA:
 
 ## Local Installation
 ### Requirements
-(Insert requirements for installation)
+```
+'numpy>1.21.0'  
+'scipy>1.6.0'  
+'datasets>2.2.0'  
+'matplotlib>3.0'  
+'pandas>1.2.0'  
+'Pillow>8.0.0'  
+'scikit-learn>1.0'  
+'emoji>1.0'
+'wordsegment>1.3'
+```
 
 ### Install
 ```sh
@@ -23,8 +33,9 @@ The user provides a pre-trained hate speech detection model and predicts it on a
 
 1. Import Statements
 ```sh
-from olea.data.cold import COLD, COLDSubmissionObject
+from olea.data.cold import COLD
 from olea.analysis.cold import COLDAnalysis
+from olea.analysis.generic import Generic
 
 #import statements for downloading example model
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
@@ -55,9 +66,12 @@ submission = cold.submit(cold.data(), preds, map=hate_map)
 ```sh
 plot_info, metrics = COLDAnalysis.analyze_on(submission,'Cat',show_examples = True)
 ```
+```sh
+plot_info, metrics = Generic.check_substring(submission,'female',show_examples = True)
+```
 
 ## Analysis
-OLEA provides generic analysis that can be applied to any NLP classification task, by evaluating performance based on a subset of the data. This can be applied to text length, and text containing certain strings, and text determined to be written in AAVE (Blodgett et al., 2016). OLEA also provides analysis specific to COLD, showing model performance on different levels of annotator agreement of offensiveness and analysis of the fine-grained categories outlined in Palmer et al. The analysis provides metrics of F1, precision, and recall for each subset of data. 
+OLEA provides generic analysis that can be applied to any NLP classification task, by evaluating performance based on a subset of the data. This can be applied to text length, and text containing certain strings, and text determined to be written in AAVE (Blodgett et al., 2016). OLEA also provides analysis specific for COLD and for HateCheck. The analysis provides metrics of F1, precision, and recall for each subset of data as well as accuracy and number of instances in each category
 
 Generic Analysis includes:
 
@@ -101,7 +115,8 @@ The HateCheck-specifc analysis includes:
 
 
 ## Contact
-Please contact Alexis Palmer (Alexis.Palmer@colorado.edu), Dananjay Srinivas (Dananjay.Srinivas@colorado.edu), Marie Grace (Marie.Grace@colorado.edu), or Jay Seabrum (Xajavion.Seabrum@colorado.edu)
+Marie Grace, Jay Seabrum, Dananjay Srinivas, and Alexis Palmer all contributed to this library. 
+Please contact olea.ask@gmail.com for further inquiries. 
 
 ## Resources
 

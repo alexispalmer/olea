@@ -76,8 +76,8 @@ def get_metrics(submission, column, cats_based_on_labels = False):
         for value in column_vals:
             df_subset = df.loc[df[column] == value]
             # my_metric = Metrics(df_subset[off_col],df_subset["preds"])
-            m_dict = Metrics.get_metrics_dictionary(y_true = df[off_col], 
-                                                    y_pred = df[preds])
+            m_dict = Metrics.get_metrics_dictionary(y_true = df_subset[off_col], 
+                                                    y_pred = df_subset[preds])
             del m_dict["accuracy"] #remove accuracy metric, can be viewed elsewhere
             
             if cats_based_on_labels:
@@ -132,8 +132,9 @@ def __remove_nonsensical_labels(m_dict, df_subset,off_col,off_labels):
         label_to_drop = off_labels[1]
     else:
         label_to_drop = off_labels[0]
-    for key in m_dict[label_to_drop]:
-        m_dict[label_to_drop][key] = '-'
+    if label_to_drop in m_dict:
+        for key in m_dict[label_to_drop]:
+            m_dict[label_to_drop][key] = '-'
         
     return m_dict
 
@@ -171,7 +172,7 @@ def __remove_nonsensical_labels(m_dict, df_subset,off_col,off_labels):
     # percents = [a/b if b else 0 for a,b in zip(correct_predictions_n, totals)]
     # results = pd.DataFrame({"Full Agreement" : ["Y","N"],"Total_Correct_Predictions": correct_predictions_n, "Total": totals,"Accuracy": percents})
     
-    return totals, correct_predictions_n, results, full_df
+   # return totals, correct_predictions_n, results, full_df
 
 def get_plotting_info_from_col(submission, feature):
     """calculates info from a dataframe for metrics and plotting usage using labels from the feature parameter.
@@ -205,5 +206,5 @@ def get_plotting_info_from_col(submission, feature):
     results = results.reset_index()
     results = results.rename(columns = {'index':feature})
     
-    return totals, correct_predictions_n,results
+    return results
     
