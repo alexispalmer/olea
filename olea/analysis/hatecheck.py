@@ -83,8 +83,8 @@ class HateCheckAnalysis(object) :
                 for x in cls.categories[f]:
                     categories.append(x)
             
-            df1 = submission.submission[submission.submission['functionality'].isin(categories)]
-            df2 = submission.submission[~submission.submission['functionality'].isin(categories)]
+            df1 = submission.submission.loc[submission.submission['functionality'].isin(categories)].copy()
+            df2 = submission.submission.loc[~submission.submission['functionality'].isin(categories)].copy()
             new_feature = str(", ").join(on)
             
         labels = [new_feature, str("Not " + new_feature)]

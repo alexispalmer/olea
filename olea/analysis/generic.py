@@ -97,8 +97,8 @@ class Generic(object) :
             metrics (df): classification report for each category
         """ 
         #find instances of substring/ vs no substring
-        df1 = submission.submission[submission.submission[submission.text_column].str.contains(substring)]
-        df2 = submission.submission[~submission.submission[submission.text_column].str.contains(substring)]
+        df1 = submission.submission.loc[submission.submission[submission.text_column].str.contains(substring)].copy()
+        df2 = submission.submission.loc[~submission.submission[submission.text_column].str.contains(substring)].copy()
         
         #create new column
         new_feature = ''.join(["Containing ", '\'',substring, '\''])
@@ -156,8 +156,8 @@ class Generic(object) :
         #get aave values
         aave_values = detection.get_aave_values(submission)
         submission.submission["AAVE"] = aave_values
-        df1 = submission.submission[submission.submission['AAVE'] >= threshold]
-        df2 = submission.submission[submission.submission['AAVE'] < threshold]
+        df1 = submission.submission.loc[submission.submission['AAVE'] >= threshold].copy()
+        df2 = submission.submission.loc[submission.submission['AAVE'] < threshold].copy()
         
         #create new column
         new_feature = "AAVE-thresh >= " + str(threshold) #Add in new feature with labels for metrics
@@ -292,9 +292,9 @@ class Generic(object) :
 
         """
         #full agreement is considered the "easy case"
-        df1 = submission.submission[submission.submission[anno_columns].eq(submission.submission[anno_columns].iloc[:, 0], axis=0).all(axis=1)]
+        df1 = submission.submission.loc[submission.submission[anno_columns].eq(submission.submission[anno_columns].iloc[:, 0], axis=0).all(axis=1)].copy()
         #not full agreement is considered the more difficult case"
-        df2 = submission.submission[~submission.submission.loc[:].isin(df1.loc[:])].dropna()
+        df2 = submission.submission[~submission.submission.loc[:].isin(df1.loc[:])].copy().dropna()
         
         
         #create new column
