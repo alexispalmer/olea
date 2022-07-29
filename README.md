@@ -67,7 +67,7 @@ plot_info, metrics = COLDAnalysis.analyze_on(submission,'Cat',show_examples = Tr
 ```
 
 ## Analysis
-OLEA provides generic analysis that can be applied to any NLP classification task, by evaluating performance based on a subset of the data. This can be applied to text length, and text containing certain strings, and text determined to be written in AAVE (Blodgett et al., 2016). OLEA also provides analysis specific to COLD, showing model performance on different levels of annotator agreement of offensiveness and analysis of the fine-grained categories outlined in Palmer et al. The analysis provides metrics of F1, precision, and recall for each subset of data. 
+OLEA provides generic analysis that can be applied to any NLP classification task, by evaluating performance based on a subset of the data. This can be applied to text length, and text containing certain strings, and text determined to be written in AAVE (Blodgett et al., 2016). OLEA also provides analysis specific for COLD and for HateCheck. The analysis provides metrics of F1, precision, and recall for each subset of data as well as accuracy and number of instances in each category
 
 Generic Analysis includes:
 
