@@ -1,8 +1,8 @@
 from setuptools import setup, find_packages
 
-VERSION = '0.0.9' 
-AUTHORS = 'OLEA Team, Anonymized for Review'
-DESCRIPTION = 'Short OLEA description'
+VERSION = '0.0.10' 
+AUTHORS = 'OLEA Team'
+DESCRIPTION = 'OLEA (Offensive Language Error Analysis) is a library for diagnostic evaluation and error analysis of models for offensive language detection. OLEA is an open-source library, providing interfaces to existing datasets as well as functionality for easily adding new datasets and new analysis functions.'
 
 
 with open('README.md') as f : 
