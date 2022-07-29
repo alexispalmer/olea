@@ -33,8 +33,9 @@ The user provides a pre-trained hate speech detection model and predicts it on a
 
 1. Import Statements
 ```sh
-from olea.data.cold import COLD, COLDSubmissionObject
+from olea.data.cold import COLD
 from olea.analysis.cold import COLDAnalysis
+from olea.analysis.generic import Generic
 
 #import statements for downloading example model
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
@@ -64,6 +65,9 @@ submission = cold.submit(cold.data(), preds, map=hate_map)
 5. Choose an analysis 
 ```sh
 plot_info, metrics = COLDAnalysis.analyze_on(submission,'Cat',show_examples = True)
+```
+```sh
+plot_info, metrics = Generic.check_substring(submission,'female',show_examples = True)
 ```
 
 ## Analysis
