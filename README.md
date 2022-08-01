@@ -9,7 +9,7 @@ The datasets currently available with OLEA:
 - **HateCheck** - HateCheck is a suite of functional tests for hate speech detection models that enable more targeted diagnostic insights. It specifies 29 model functionalities motivated by a review of previous research and a series of interviews with civil society stakeholders with test cases for each functionality. (Röttger et al., 2021)
 
 ## Local Installation
-### Requirements
+### Dependencies 
 ```
 'numpy>1.21.0'  
 'scipy>1.6.0'  
