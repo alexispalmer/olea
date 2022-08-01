@@ -7,9 +7,9 @@ from olea.data.hatexplain import HateXplain
 __all__ = [
     
     "Dataset", "DatasetSubmissionObject",
-    "COLD" , "COLDSubmissionObject" , 
-    "HateCheck" , "HateCheckSubmissionObject" ,
-    "HateXplain" , "HateXplainSubmissionObject"
+    "COLD", 
+    "HateCheck" ,
+    "HateXplain"
 ]
 
 
