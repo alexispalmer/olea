@@ -47,7 +47,7 @@ from transformers import TextClassificationPipeline
 cold = COLD()
 
 #Load Model
-link = "Hate-speech-CNERG/bert-base-uncased-hatexplain"
+link = 'Hate-speech-CNERG/bert-base-uncased-hatexplain'
 tokenizer = AutoTokenizer.from_pretrained(link)
 model = AutoModelForSequenceClassification.from_pretrained(link)
 ```
@@ -55,11 +55,11 @@ model = AutoModelForSequenceClassification.from_pretrained(link)
 ```sh
 #Predict on COLD
 pipe = TextClassificationPipeline(model=model, tokenizer=tokenizer)
-preds = pd.DataFrame(pipe(list(cold.data()["Text"]))).label
+preds = pd.DataFrame(pipe(list(cold.data()['Text']))).label
 ```
 4. Define a Mapping and Create Submission Object
 ```sh
-hate_map = {"offensive": 'Y' , "hate speech": 'Y' , "normal":'N'}
+hate_map = {'offensive': 'Y' , 'hate speech': 'Y' , 'normal':'N'}
 submission = cold.submit(cold.data(), preds, map=hate_map)
 ```
 5. Choose an analysis 
