@@ -7,8 +7,8 @@ from olea.data.dso import DatasetSubmissionObject
 class Dataset(object) : 
 
     def __init__(self, data:pd.DataFrame=None, 
-                data_columns=Union[str, List[str]], 
-                label_column=str,
+                features=Union[str, List[str]], 
+                gold_column=str,
                 text_column=str) -> None:
         """Initializes the dataset instance. 
 
@@ -22,13 +22,15 @@ class Dataset(object) :
         self.dataset_name = None
         self.shape = None
         self.description = None
-        self.data_columns = None
-        self.label_column = None
+        
+        self.features = None
+        self.gold_label = None
         self.text_column = None
+        
         self.unique_labels = None
         self._data = None
         
-        self._load_data(data, data_columns, label_column, text_column)
+        self._load_data(data, features, gold_column, text_column)
 
     def __call__(self) -> None:
         pass
@@ -40,11 +42,11 @@ class Dataset(object) :
         pass
 
     def _load_data(self, data:pd.DataFrame, 
-                data_columns:Union[str, List[str]], 
-                label_column:str,
+                features:Union[str, List[str]], 
+                gold_column:str,
                 text_column:str) -> None:
-        self.data_columns = data_columns
-        self.label_column = label_column
+        self.features = features
+        self.gold_column = gold_column
         self.text_column = text_column
         self._data = data
 
@@ -116,10 +118,10 @@ class Dataset(object) :
     def info(self) -> None : 
         pass
 
-    def submit(self, dataset:pd.DataFrame, submission:iter, map:dict=None) -> None : 
+    def submit(self, batch:pd.DataFrame, predictions:iter, map:dict=None) -> None : 
 
-        valid_predictions = self._validate_predictions(dataset, submission, map)
-        submission_df = self._data.loc[self._data.index.isin(dataset.index.values)]
+        valid_predictions = self._validate_predictions(batch, predictions, map)
+        submission_df = self._data.loc[self._data.index.isin(batch.index.values)]
         submission_df['preds'] = valid_predictions
 
         submission_object = DatasetSubmissionObject(submission_df, self)

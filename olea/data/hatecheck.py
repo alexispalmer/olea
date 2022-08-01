@@ -11,10 +11,12 @@ class HateCheck(Dataset) :
         self.dataset_name = 'HateCheck'
         self.URL = 'COLD-team/HateCheck'
         self.description = 'This is the dataset for HateCheck.'
-        self.data_columns = ['functionality', 'case_id' , 'test_case' , 'direction' , 
+        
+        self.dimensions = ['functionality', 'case_id' , 'test_case' , 'direction' , 
                             'focus_words' , 'focus_lemma']
-        self.label_columns = ['label_gold']
-        self.label_column ='label_gold'
+        self.text_column = 'test_case'
+        self.gold_column ='label_gold'
+        
         self.unique_labels = None
         self.split = 'test'
 
@@ -30,35 +32,7 @@ class HateCheck(Dataset) :
         return df 
 
     def submit(self, dataset: pd.DataFrame, submission: iter, map: dict = None) -> DatasetSubmissionObject:
-        submission_df = super().submit(dataset, submission, map)
-        return HateCheckSubmissionObject(submission_df)
-
-
-class HateCheckSubmissionObject(DatasetSubmissionObject) : 
-
-    label_column = 'label_gold'
-    prediction_column = 'preds'
-    text_column = 'test_case'
-    data_columns = ['functionality', 'case_id' , 'test_case' , 'direction' , 
-                    'focus_words' , 'focus_lemma']
-
-    def __init__(self, submission:DatasetSubmissionObject):
-        self.submission = submission.submission
-
-
-    def filter_submission(self, on:str, filter:callable, **kwargs):
-
-        self.submission['filter_results'] = self.submission[on].apply(filter)
-        filtered_submission = self.submission[self.submission['filter_results'] == True]
-
-        if 'columns' in kwargs : 
-            outputs = [filtered_submission[col] for col in kwargs['columns']]
-            return outputs
-    
-        else : 
-            return filtered_submission[self.data_columns]
-        
-
+        return super().submit(dataset, submission, map)
 
 if __name__ == '__main__' : 
 
