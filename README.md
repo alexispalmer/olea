@@ -32,12 +32,12 @@ The user provides a pre-trained hate speech detection model and predicts it on a
 
 1. Import Statements
 ```sh
-from olea.data.cold import COLD
-from olea.analysis.cold import COLDAnalysis
-from olea.analysis.generic import Generic
+from olea.data import COLD
+from olea.analysis import COLDAnalysis
+from olea.analysis import Generic
 import pandas as pd
 
-#import statements for downloading example model
+#import statements for downloading the example model
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from transformers import TextClassificationPipeline
 ```
@@ -46,7 +46,7 @@ from transformers import TextClassificationPipeline
 #Load Dataset
 cold = COLD()
 
-#Load Model
+#Load in a Model
 link = 'Hate-speech-CNERG/bert-base-uncased-hatexplain'
 tokenizer = AutoTokenizer.from_pretrained(link)
 model = AutoModelForSequenceClassification.from_pretrained(link)
@@ -55,12 +55,12 @@ model = AutoModelForSequenceClassification.from_pretrained(link)
 ```sh
 #Predict on COLD
 pipe = TextClassificationPipeline(model=model, tokenizer=tokenizer)
-preds = pd.DataFrame(pipe(list(cold.data()['Text']))).label
+predictions = pd.DataFrame(pipe(list(cold.data()['Text']))).label
 ```
 4. Define a Mapping and Create Submission Object
 ```sh
 hate_map = {'offensive': 'Y' , 'hate speech': 'Y' , 'normal':'N'}
-submission = cold.submit(cold.data(), preds, map=hate_map)
+submission = cold.submit(cold.data(), predictions, map=hate_map)
 ```
 5. Choose an analysis 
 ```sh
