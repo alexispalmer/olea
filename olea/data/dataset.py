@@ -104,13 +104,13 @@ class Dataset(object) :
 
             if end < self._data.shape[0] :
 
-                batch = self._data.loc[start:end, self.data_columns]
+                batch = self._data.loc[start:end, self.features]
                 start +=  batch_size + 1 # Once again, Pandas indexes weirdly
                 end  = start + batch_size
 
             elif end >= self._data.shape[0] : 
                 start, end = self._data.shape[0] - batch_size, self._data.shape[0]
-                batch = self._data.loc[start:end, self.data_columns]
+                batch = self._data.loc[start:end, self.features]
                 start, end = 0, batch_size
                 
             yield batch
