@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def plot_bar_graph(plot_info, title, rot = 0, xlabel = ""):
+def plot_bar_graph(plot_info, savePlotToFile, title = "", rot = 0, xlabel = ""):
     """Plots bar graph for different analyses
 
     Args:
@@ -10,6 +10,7 @@ def plot_bar_graph(plot_info, title, rot = 0, xlabel = ""):
             Total (list): number of total instances for each category
             Total_Correct_Predictions (list): number of correctly predicted instances for each category
             accuracy (list): accuracy of total_correct_predictions/ total
+            savePlotToFile (str): File name for saving plot, empty string will not save a plot
         title (str): title of graph
         rot (int): rotation for x-axis ticks
         xlabel (str): x label
@@ -48,14 +49,32 @@ def plot_bar_graph(plot_info, title, rot = 0, xlabel = ""):
     plt.tick_params(axis='x', labelsize=fsize)
     plt.xlabel(xlabel)
     plt.ylabel("Number of Instances")
+    
+    if savePlotToFile != "":
+        plt.savefig(savePlotToFile)
+        print("saving figure to " + savePlotToFile)
     plt.show()
 
 def plot_histogram(title = "",hist_bins = 10,legend_location = 'upper right', 
                    xlabel = "", ylabel = "Num. of Instances", 
                    list_of_values = [], 
                    correct_preds = [],
-                   accuracy = []
-                   ):
+                   accuracy = [],
+                   savePlotToFile= ""):
+    """Plots histogram specifically for str_len_analysis, but could potentially be used for more
+
+    Args:
+        list_of_values (list): number of total instances for each category
+        correct_preds (list): number of correctly predicted instances for each category
+        accuracy (list): accuracy of total_correct_predictions/ total
+        savePlotToFile (str): File name for saving plot, empty string will not save a plot
+        title (str): title of graph
+        hist_bins (int): number of bins to use
+        legend_location (str): legend location
+        rot (int): rotation for x-axis ticks
+        xlabel (str): x label
+        y_label(str):y label
+    """
     
     fig, ax = plt.subplots()
     a, bins, _ = ax.hist(list_of_values,bins=hist_bins, color="red", 
@@ -77,7 +96,13 @@ def plot_histogram(title = "",hist_bins = 10,legend_location = 'upper right',
     plt.ylabel(ylabel)
     plt.title(title)
     plt.xticks(bins)
+    
+    if savePlotToFile != "":
+        plt.savefig(savePlotToFile)
+        print("saving figure to " + savePlotToFile)
     plt.show()
+    
+    
 
 def histogram_values(list_of_values = [], 
                      correct_preds = []) -> list:

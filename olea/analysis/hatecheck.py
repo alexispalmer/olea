@@ -38,7 +38,7 @@ class HateCheckAnalysis(object) :
                 }
 
     @classmethod
-    def _run_analysis_on_functionality(cls, submission:HateCheckSubmissionObject, on:Union[str,List[str]],show_examples,plot) :
+    def _run_analysis_on_functionality(cls, submission:HateCheckSubmissionObject, on:Union[str,List[str]],show_examples,plot,savePlotToFile) :
         """helper function for running analysis on a category, a list of categories, or over all categories. Returns two dataframes. plot_info corresponds to 
             information that is plotted, number of offensive/non offensive instances for each category in "on" as well as
             accuracy of model. Metrics returns the classification report for each category specified on "on"
@@ -49,6 +49,7 @@ class HateCheckAnalysis(object) :
                 class (eg: 'threats'), or list of categories (eg: ['threats','slurs'])
             plot (boolean): to plot results or not
             show_examples (boolean): to return examples or not
+            savePlotToFile (str): File name for saving plot, empty string will not save a plot
 
         Returns:
             plot_info (df) : results corresponding to plotted information:(total instances for each category,
@@ -64,7 +65,7 @@ class HateCheckAnalysis(object) :
                     new_dic.setdefault(x,[]).append(k)
                     
             submission.submission[on] = submission.submission.apply (lambda row: new_dic[row.functionality][0], axis=1)
-            return Generic.analyze_on(submission, on, show_examples, plot)
+            return Generic.analyze_on(submission, on, show_examples, plot,savePlotToFile)
         
         
         # analyze on one of the categories
@@ -91,7 +92,7 @@ class HateCheckAnalysis(object) :
         df1[new_feature] = labels[0]
         df2[new_feature] = labels[1]
         submission.submission = df1.merge(df2,"outer")
-        return Generic.analyze_on (submission, new_feature, show_examples, plot)
+        return Generic.analyze_on (submission, new_feature, show_examples, plot,savePlotToFile)
            
            
         #elif type(on) == str : 
@@ -108,7 +109,7 @@ class HateCheckAnalysis(object) :
         #                    off_col = cls.label_column, 
         #                    column = None)
     @classmethod
-    def analyze_on(cls, hatecheck_submission:HateCheckSubmissionObject, on:Union[str, List[str]], show_examples = True, plot =True) : 
+    def analyze_on(cls, hatecheck_submission:HateCheckSubmissionObject, on:Union[str, List[str]], show_examples = True, plot =True,savePlotToFile = "") : 
         """function for running analysis on a category, a list of categories, or over all categories. Returns two dataframes. plot_info corresponds to 
             information that is plotted, number of offensive/non offensive instances for each category in "on" as well as
             accuracy of model. Metrics returns the classification report for each category specified on "on"
@@ -119,13 +120,14 @@ class HateCheckAnalysis(object) :
                 class (eg: 'threats'), or list of categories (eg: ['threats','slurs'])
             plot (boolean): to plot results or not
             show_examples (boolean): to return examples or not
+            savePlotToFile (str): File name for saving plot, empty string will not save a plot
 
         Returns:
             plot_info (df) : results corresponding to plotted information:(total instances for each category,
                              total correctly predicted, and accuracy)
             metrics (df): classification report for each category
         """
-        return cls._run_analysis_on_functionality(hatecheck_submission, on, show_examples, plot)
+        return cls._run_analysis_on_functionality(hatecheck_submission, on, show_examples, plot,savePlotToFile)
 
     # @classmethod
     # def analyze_on_all(cls, hatecheck_submission:HateCheckSubmissionObject) :
