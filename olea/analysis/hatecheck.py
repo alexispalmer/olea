@@ -24,10 +24,10 @@ class HateCheckAnalysis(object) :
                     'spell_space_add_h', 'spell_leet_h']
 
     categories = {'derogation (h)' : ['derog_neg_emote_h', 'derog_neg_attrib_h', 'derog_dehum_h', 'derog_impl_h'], 
-                'threats' : ['threat_dir_h', 'threat_norm_h'],
+                'threats (h)' : ['threat_dir_h', 'threat_norm_h'],
                 'slurs':['slur_h', 'slur_homonym_nh', 'slur_reclaimed_nh'],
                 'profanity' : ['profanity_h', 'profanity_nh'], 
-                'pronoun_references':['ref_subs_clause_h','ref_subs_sent_h'], 
+                'pronoun_references (h)':['ref_subs_clause_h','ref_subs_sent_h'], 
                 'negation':['negate_pos_h', 'negate_neg_nh'], 
                 'phrasing (h)' : ['phrase_question_h','phrase_opinion_h'], 
                 'identity(nh)' : ['ident_neutral_nh', 'ident_pos_nh'],
