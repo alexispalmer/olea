@@ -8,7 +8,7 @@ from olea.analysis.generic import Generic
 
 class HateCheckAnalysis(object) : 
 
-    label_column = 'label_gold'
+    gold_column = 'label_gold'
     prediction_column = 'preds'
 
     data_columns = ['functionality', 'case_id' , 'test_case' , 'direction' , 
@@ -95,19 +95,6 @@ class HateCheckAnalysis(object) :
         return Generic.analyze_on (submission, new_feature, show_examples, plot,savePlotToFile)
            
            
-        #elif type(on) == str : 
-           # analysis_set = submission.submission[submission.submission['functionality'] == on]
-        # else : 
-        #     analysis_set = submission.submission[submission.submission['functionality'].isin(on)]
-
-        
-        #create new column
-           
-
-       
-        # return get_metrics(df = analysis_set, 
-        #                    off_col = cls.label_column, 
-        #                    column = None)
     @classmethod
     def analyze_on(cls, hatecheck_submission:HateCheckSubmissionObject, on:Union[str, List[str]], show_examples = True, plot =True,savePlotToFile = "") : 
         """function for running analysis on a category, a list of categories, or over all categories. Returns two dataframes. plot_info corresponds to 
@@ -128,11 +115,6 @@ class HateCheckAnalysis(object) :
             metrics (df): classification report for each category
         """
         return cls._run_analysis_on_functionality(hatecheck_submission, on, show_examples, plot,savePlotToFile)
-
-    # @classmethod
-    # def analyze_on_all(cls, hatecheck_submission:HateCheckSubmissionObject) :
-    #     return cls._run_analysis_on_functionality(submission=hatecheck_submission.submission, on=cls.functionalities)
-
 
 if __name__ == '__main__' : 
 

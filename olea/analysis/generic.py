@@ -74,7 +74,7 @@ class Generic(object) :
         
         return cls._run_analysis_on(submission, 
                                     features, 
-                                    submission.label_column, 
+                                    submission.gold_column, 
                                     plot,
                                     show_examples,
                                     savePlotToFile)
@@ -113,25 +113,11 @@ class Generic(object) :
         #run analysis
         return cls._run_analysis_on(submission, 
                                     new_feature, 
-                                    submission.label_column, 
+                                    submission.gold_column, 
                                     plot,
                                     show_examples,
                                     savePlotToFile)
-        # totals, correct_predictions_n,results= get_plotting_info_from_col(full_df, new_feature, off_col)
-        
-        
-        # plot the bar graph
-        # if plot:
-        #     plot_bar_graph(labels, totals, correct_predictions_n, 
-        #                     title = "Predictions on Text with " + new_feature)
-        # #get examples
-        # if show_examples == True:
-        #     results = get_examples(full_df,new_feature,results,off_col=off_col,sort_list = False)
-        
-        # #get_metrics
-        # metrics = get_metrics(full_df, off_col,new_feature,)
-        
-        # return results, metrics
+     
 
 
     @classmethod
@@ -174,27 +160,12 @@ class Generic(object) :
        
         return cls._run_analysis_on(submission, 
                                     new_feature, 
-                                    submission.label_column, 
+                                    submission.gold_column, 
                                     plot,
                                     show_examples,
                                     savePlotToFile)
         
         
-        # totals,correct_predictions_n, results, full_df= get_plotting_info_create_col(
-        #     data_at,data_bt, new_feature,off_col)
-
-        # # plot the bar graph
-        # if plot:
-        #     plot_bar_graph(labels, totals, correct_predictions_n, 
-        #                     title = "Predictions on Text with " + new_feature)
-        # #get examples
-        # if show_examples == True:
-        #     results = get_examples(full_df,new_feature,results,off_col,sort_list = False)
-        
-        # #get_metrics
-        # metrics = get_metrics(full_df,off_col,new_feature)
-        
-        # return results, metrics
                 
 
     @staticmethod
@@ -231,7 +202,7 @@ class Generic(object) :
             new_feature = "Average Characters per Word"
             submission.submission[new_feature] = [np.average([len(i) for i in row])for row in submission.submission[submission.text_column].str.split()]
        
-        correct_preds = submission.submission[(submission.submission[submission.prediction_column] ==submission.submission[submission.label_column])]
+        correct_preds = submission.submission[(submission.submission[submission.prediction_column] ==submission.submission[submission.gold_column])]
             
         bins, bin_vals, bin_vals_correct = histogram_values(submission.submission[new_feature],
                                                 correct_preds[new_feature])
@@ -316,7 +287,7 @@ class Generic(object) :
        
         return cls._run_analysis_on(submission, 
                                     new_feature, 
-                                    submission.label_column, 
+                                    submission.gold_column, 
                                     plot,
                                     show_examples,
                                     savePlotToFile)
