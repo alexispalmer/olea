@@ -1,7 +1,6 @@
 from typing import List, Union
 import numpy as np
 
-from olea.data.hatecheck import HateCheckSubmissionObject
 from olea.utils.analysis_tools import get_metrics, get_examples
 from olea.data.dso import DatasetSubmissionObject
 from olea.analysis.generic import Generic
@@ -23,22 +22,35 @@ class HateCheckAnalysis(object) :
                     'spell_char_swap_h', 'spell_char_del_h', 'spell_space_del_h',
                     'spell_space_add_h', 'spell_leet_h']
 
-    categories = {'derogation (h)' : ['derog_neg_emote_h', 'derog_neg_attrib_h', 'derog_dehum_h', 'derog_impl_h'], 
-                'threats (h)' : ['threat_dir_h', 'threat_norm_h'],
+    categories = {'derogation' : ['derog_neg_emote_h', 'derog_neg_attrib_h', 'derog_dehum_h', 'derog_impl_h'], 
+                'threats' : ['threat_dir_h', 'threat_norm_h'],
                 'slurs':['slur_h', 'slur_homonym_nh', 'slur_reclaimed_nh'],
                 'profanity' : ['profanity_h', 'profanity_nh'], 
-                'pronoun_references (h)':['ref_subs_clause_h','ref_subs_sent_h'], 
+                'pronoun_references':['ref_subs_clause_h','ref_subs_sent_h'], 
                 'negation':['negate_pos_h', 'negate_neg_nh'], 
-                'phrasing (h)' : ['phrase_question_h','phrase_opinion_h'], 
-                'identity(nh)' : ['ident_neutral_nh', 'ident_pos_nh'],
-                'counter (nh)' : ['counter_quote_nh','counter_ref_nh'],
-                'nonhateful-abuse (nh)' : ['target_obj_nh', 'target_indiv_nh', 'target_group_nh'],
-                'spelling changes (h)' : ['spell_char_swap_h', 'spell_char_del_h', 'spell_space_del_h',
+                'phrasing' : ['phrase_question_h','phrase_opinion_h'], 
+                'identity' : ['ident_neutral_nh', 'ident_pos_nh'],
+                'counter' : ['counter_quote_nh','counter_ref_nh'],
+                'nonhateful-abuse' : ['target_obj_nh', 'target_indiv_nh', 'target_group_nh'],
+                'spelling changes' : ['spell_char_swap_h', 'spell_char_del_h', 'spell_space_del_h',
                                 'spell_space_add_h', 'spell_leet_h']
+                }
+    
+    category_hate_label = {'derogation' : '(h)', 
+                'threats' : '(h)' ,
+                'slurs': "",
+                'profanity' : "", 
+                'pronoun_references': '(h)', 
+                'negation':"", 
+                'phrasing' : '(h)', 
+                'identity' : '(nh)' ,
+                'counter' : '(nh)',
+                'nonhateful-abuse' : '(nh)',
+                'spelling changes' :  '(h)'
                 }
 
     @classmethod
-    def _run_analysis_on_functionality(cls, submission:HateCheckSubmissionObject, on:Union[str,List[str]],show_examples,plot,savePlotToFile) :
+    def _run_analysis_on_functionality(cls, submission:DatasetSubmissionObject, on:Union[str,List[str]],show_examples,plot,savePlotToFile) :
         """helper function for running analysis on a category, a list of categories, or over all categories. Returns two dataframes. plot_info corresponds to 
             information that is plotted, number of offensive/non offensive instances for each category in "on" as well as
             accuracy of model. Metrics returns the classification report for each category specified on "on"
@@ -96,7 +108,7 @@ class HateCheckAnalysis(object) :
            
            
     @classmethod
-    def analyze_on(cls, hatecheck_submission:HateCheckSubmissionObject, on:Union[str, List[str]], show_examples = True, plot =True,savePlotToFile = "") : 
+    def analyze_on(cls, hatecheck_submission:DatasetSubmissionObject, on:Union[str, List[str]], show_examples = True, plot =True,savePlotToFile = "") : 
         """function for running analysis on a category, a list of categories, or over all categories. Returns two dataframes. plot_info corresponds to 
             information that is plotted, number of offensive/non offensive instances for each category in "on" as well as
             accuracy of model. Metrics returns the classification report for each category specified on "on"

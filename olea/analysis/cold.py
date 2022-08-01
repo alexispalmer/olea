@@ -1,5 +1,4 @@
 from olea.data.dso import DatasetSubmissionObject
-from olea.data.cold import COLDSubmissionObject
 from olea.utils.analysis_tools import get_metrics, get_examples
 from olea.utils.analysis_tools import get_plotting_info_from_col
 from olea.viz.viz import plot_bar_graph
@@ -9,7 +8,7 @@ class COLDAnalysis(object) :
     
         
     @classmethod
-    def _run_analysis_on_functionality(cls,submission:COLDSubmissionObject, on:str,plot, show_examples,savePlotToFile) :
+    def _run_analysis_on_functionality(cls,submission:DatasetSubmissionObject, on:str,plot, show_examples,savePlotToFile) :
         """helper function for running analysis on a specific column. Returns two dataframes. plot_info corresponds to 
             information that is plotted, number of offensive/non offensive instances for each category in "on" as well as
             accuracy of model. Metrics returns the classification report for each category specified on "on"
@@ -47,7 +46,7 @@ class COLDAnalysis(object) :
         return plot_info, metrics
             
     @classmethod
-    def analyze_on(cls, submission:COLDSubmissionObject, on:str,plot=True,show_examples = False,savePlotToFile = "") : 
+    def analyze_on(cls, submission:DatasetSubmissionObject, on:str,plot=True,show_examples = False,savePlotToFile = "") : 
         """function for running analysis on a specific column, and plots results if specified. Returns two dataframes. 
             plot_info corresponds to information that is plotted, number of offensive/non offensive instances for each category 
             in "on" as well as

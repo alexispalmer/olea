@@ -51,7 +51,7 @@ class Dataset(object) :
         self._data = data
 
     def _find_unique_labels(self) :
-        self.unique_labels = pd.unique(self._data[self.label_column].values.ravel('K'))
+        self.unique_labels = pd.unique(self._data[self.gold_column].values.ravel('K'))
 
     def _validate_predictions(self, dataset, submission, map=None) :
 
@@ -92,7 +92,7 @@ class Dataset(object) :
         return [map[sub] for sub in submission]
 
     def data(self) : 
-        return self._data[self.data_columns]
+        return self._data[self.features]
 
     def generator(self, batch_size) -> pd.DataFrame:
         

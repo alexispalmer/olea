@@ -12,7 +12,7 @@ class HateCheck(Dataset) :
         self.URL = 'COLD-team/HateCheck'
         self.description = 'This is the dataset for HateCheck.'
         
-        self.dimensions = ['functionality', 'case_id' , 'test_case' , 'direction' , 
+        self.features = ['functionality', 'case_id' , 'test_case' , 'direction' , 
                             'focus_words' , 'focus_lemma']
         self.text_column = 'test_case'
         self.gold_column ='label_gold'
