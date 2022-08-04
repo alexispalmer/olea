@@ -7,10 +7,9 @@ The datasets currently available with OLEA:
 
 - **COLD (Complex Offensive Language Dataset )** - The COLD data set is intended for researchers to diagnose and assess their automatic hate speech detection systems. The corpus highlights 4 different types of complex offensive language: slurs, reclaimed slurs, adjective nominalization, distancing, and also non-offensive texts. (Palmer et al., 2020)
 - **HateCheck** - HateCheck is a suite of functional tests for hate speech detection models that enable more targeted diagnostic insights. It specifies 29 model functionalities motivated by a review of previous research and a series of interviews with civil society stakeholders with test cases for each functionality. (Röttger et al., 2021)
-- **HateXplain** - Each post in this dataset is annotated from three different perspectives: the basic, commonly used 3-class classification (i.e., hate, offensive or normal), the target community (i.e., the community that has been the victim of hate speech/offensive speech in the post), and the rationales, i.e., the portions of the post on which their labelling decision (as hate, offensive or normal) is based. (Matthew et al., 2022)
 
 ## Local Installation
-### Requirements
+### Dependencies 
 ```
 'numpy>1.21.0'  
 'scipy>1.6.0'  
@@ -33,11 +32,12 @@ The user provides a pre-trained hate speech detection model and predicts it on a
 
 1. Import Statements
 ```sh
-from olea.data.cold import COLD
-from olea.analysis.cold import COLDAnalysis
-from olea.analysis.generic import Generic
+from olea.data import COLD
+from olea.analysis import COLDAnalysis
+from olea.analysis import Generic
+import pandas as pd
 
-#import statements for downloading example model
+#import statements for downloading the example model
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from transformers import TextClassificationPipeline
 ```
@@ -46,8 +46,8 @@ from transformers import TextClassificationPipeline
 #Load Dataset
 cold = COLD()
 
-#Load Model
-link = "Hate-speech-CNERG/bert-base-uncased-hatexplain"
+#Load in a Model
+link = 'Hate-speech-CNERG/bert-base-uncased-hatexplain'
 tokenizer = AutoTokenizer.from_pretrained(link)
 model = AutoModelForSequenceClassification.from_pretrained(link)
 ```
@@ -55,12 +55,12 @@ model = AutoModelForSequenceClassification.from_pretrained(link)
 ```sh
 #Predict on COLD
 pipe = TextClassificationPipeline(model=model, tokenizer=tokenizer)
-preds = pd.DataFrame(pipe(list(cold.data()["Text"]))).label
+predictions = pd.DataFrame(pipe(list(cold.data()['Text']))).label
 ```
 4. Define a Mapping and Create Submission Object
 ```sh
-hate_map = {"offensive": 'Y' , "hate speech": 'Y' , "normal":'N'}
-submission = cold.submit(cold.data(), preds, map=hate_map)
+hate_map = {'offensive': 'Y' , 'hate speech': 'Y' , 'normal':'N'}
+submission = cold.submit(cold.data(), predictions, map=hate_map)
 ```
 5. Choose an analysis 
 ```sh
@@ -121,8 +121,6 @@ Please contact olea.ask@gmail.com for further inquiries.
 ## Resources
 
 Blodgett, S. L., Green, L., & O’Connor, B. (2016). Demographic Dialectal Variation in Social Media: A Case Study of African-American English. Proceedings of the 2016 Conference on Empirical Methods in Natural Language Processing, 1119–1130. https://doi.org/10.18653/v1/D16-1120
-
-Mathew, B., Saha, P., Yimam, S. M., Biemann, C., Goyal, P., & Mukherjee, A. (2022). HateXplain: A Benchmark Dataset for Explainable Hate Speech Detection (arXiv:2012.10289). arXiv. http://arxiv.org/abs/2012.10289
 
 Palmer, A., Carr, C., Robinson, M., & Sanders, J. (2020). COLD: Annotation scheme and evaluation data set for complex oﬀensive language in English. 28.
 

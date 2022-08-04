@@ -14,7 +14,7 @@ def get_examples(submission,column,results, sort_list= False):
         df: updated results 
     """
     df = submission.submission
-    off_col = submission.label_column
+    off_col = submission.gold_column
     preds = submission.prediction_column
     
     column_vals = results[column]
@@ -36,7 +36,7 @@ def get_examples(submission,column,results, sort_list= False):
             example = incorrect_values.sample(1)
             examples[i] = example[submission.text_column].iloc[0]
             examples_pred[i] = example[submission.prediction_column].iloc[0]
-            examples_gold[i] = example[submission.label_column].iloc[0]
+            examples_gold[i] = example[submission.gold_column].iloc[0]
         
     results["Example with Incorrect Classification"] = examples
     results["Example Predicted Label"] = examples_pred
@@ -58,7 +58,7 @@ def get_metrics(submission, column, cats_based_on_labels = False):
         df: metrics information
     
     """
-    off_col = submission.label_column
+    off_col = submission.gold_column
     preds = submission.prediction_column
     df = submission.submission
     
@@ -188,7 +188,7 @@ def get_plotting_info_from_col(submission, feature):
        results  (df): summarization of results, corresponds to plotted information. Contains totals, correct_predictions, and accuracies
     """
     df = submission.submission
-    off_col = submission.label_column
+    off_col = submission.gold_column
     preds = submission.prediction_column
     
     correct_preds = df[(df[preds] == df[off_col])]

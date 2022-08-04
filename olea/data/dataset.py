@@ -7,8 +7,8 @@ from olea.data.dso import DatasetSubmissionObject
 class Dataset(object) : 
 
     def __init__(self, data:pd.DataFrame=None, 
-                data_columns=Union[str, List[str]], 
-                label_column=str,
+                features=Union[str, List[str]], 
+                gold_column=str,
                 text_column=str) -> None:
         """Initializes the dataset instance. 
 
@@ -22,13 +22,15 @@ class Dataset(object) :
         self.dataset_name = None
         self.shape = None
         self.description = None
-        self.data_columns = None
-        self.label_column = None
+        
+        self.features = None
+        self.gold_label = None
         self.text_column = None
+        
         self.unique_labels = None
         self._data = None
         
-        self._load_data(data, data_columns, label_column, text_column)
+        self._load_data(data, features, gold_column, text_column)
 
     def __call__(self) -> None:
         pass
@@ -40,16 +42,16 @@ class Dataset(object) :
         pass
 
     def _load_data(self, data:pd.DataFrame, 
-                data_columns:Union[str, List[str]], 
-                label_column:str,
+                features:Union[str, List[str]], 
+                gold_column:str,
                 text_column:str) -> None:
-        self.data_columns = data_columns
-        self.label_column = label_column
+        self.features = features
+        self.gold_column = gold_column
         self.text_column = text_column
         self._data = data
 
     def _find_unique_labels(self) :
-        self.unique_labels = pd.unique(self._data[self.label_column].values.ravel('K'))
+        self.unique_labels = pd.unique(self._data[self.gold_column].values.ravel('K'))
 
     def _validate_predictions(self, dataset, submission, map=None) :
 
@@ -90,7 +92,7 @@ class Dataset(object) :
         return [map[sub] for sub in submission]
 
     def data(self) : 
-        return self._data[self.data_columns]
+        return self._data[self.features]
 
     def generator(self, batch_size) -> pd.DataFrame:
         
@@ -102,13 +104,13 @@ class Dataset(object) :
 
             if end < self._data.shape[0] :
 
-                batch = self._data.loc[start:end, self.data_columns]
+                batch = self._data.loc[start:end, self.features]
                 start +=  batch_size + 1 # Once again, Pandas indexes weirdly
                 end  = start + batch_size
 
             elif end >= self._data.shape[0] : 
                 start, end = self._data.shape[0] - batch_size, self._data.shape[0]
-                batch = self._data.loc[start:end, self.data_columns]
+                batch = self._data.loc[start:end, self.features]
                 start, end = 0, batch_size
                 
             yield batch
@@ -116,10 +118,10 @@ class Dataset(object) :
     def info(self) -> None : 
         pass
 
-    def submit(self, dataset:pd.DataFrame, submission:iter, map:dict=None) -> None : 
+    def submit(self, batch:pd.DataFrame, predictions:iter, map:dict=None) -> None : 
 
-        valid_predictions = self._validate_predictions(dataset, submission, map)
-        submission_df = self._data.loc[self._data.index.isin(dataset.index.values)]
+        valid_predictions = self._validate_predictions(batch, predictions, map)
+        submission_df = self._data.loc[self._data.index.isin(batch.index.values)]
         submission_df['preds'] = valid_predictions
 
         submission_object = DatasetSubmissionObject(submission_df, self)

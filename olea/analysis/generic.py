@@ -17,7 +17,7 @@ class Generic(object) :
     @classmethod
     def _run_analysis_on(cls, submission:DatasetSubmissionObject, 
                         on:str, 
-                        target_column:str,plot, show_examples) : 
+                        target_column:str,plot, show_examples,savePlotToFile) : 
         
         """helper function for running analysis on a specific column. Returns two dataframes. plot_info corresponds to 
             information that is plotted, number of offensive/non offensive instances for each category in "on" as well as
@@ -28,6 +28,7 @@ class Generic(object) :
             on (str): column name in submission.submission dataframe to run analysis on
             plot (boolean): to plot results or not
             show_examples (boolean): to return examples or not
+            savePlotToFile (str): File name for saving plot, empty string will not save a plot
 
         Returns:
             plot_info (df) : results corresponding to plotted information:(total instances for each category,
@@ -40,7 +41,7 @@ class Generic(object) :
           
           # plot the bar graph
         if plot:
-             plot_bar_graph(plot_info, title = str("Predictions on " + on))
+             plot_bar_graph(plot_info, savePlotToFile, title = str("Predictions on " + on))
           #get examples
         if show_examples:
              plot_info = get_examples(submission, on, plot_info)
@@ -51,7 +52,7 @@ class Generic(object) :
 
     @classmethod
     def analyze_on(cls, submission:DatasetSubmissionObject, 
-                    features:Union[str, List[str]],plot=True,show_examples=False): 
+                    features:Union[str, List[str]],plot=True,show_examples=False, savePlotToFile= ""): 
         """function for running analysis on a specific column, and plots results if specified. Returns two dataframes. 
             plot_info corresponds to information that is plotted, number of offensive/non offensive instances for each category 
             in "on" as well as
@@ -62,6 +63,7 @@ class Generic(object) :
             on (str): column name in submission.submission dataframe to run analysis on
             plot (boolean): to plot results or not
             show_examples (boolean): to return examples or not
+            savePlotToFile (str): File name for saving plot, empty string will not save a plot
 
         Returns:
             plot_info (df) : results corresponding to plotted information:(total instances for each category,
@@ -72,16 +74,17 @@ class Generic(object) :
         
         return cls._run_analysis_on(submission, 
                                     features, 
-                                    submission.label_column, 
+                                    submission.gold_column, 
                                     plot,
-                                    show_examples)
+                                    show_examples,
+                                    savePlotToFile)
 
     @classmethod
     def check_substring(cls, submission:DatasetSubmissionObject,
                         substring:str,
                         plot=True,
                         show_examples=False,
-                        ):
+                        savePlotToFile= ""):
         """check how model predicts on instances containing a specific substring vs without that substring.
 
         Args:
@@ -90,7 +93,7 @@ class Generic(object) :
             plot (boolean): to plot or not to plot
             show_examples (boolean): to show examples of instances the model predicted incorrectly or not
                                     (WARNING: LIKELY CONTAINS OFFENSIVE LANGUAGE)
-            off_col (str): ground truth column name 
+            savePlotToFile (str): File name for saving plot, empty string will not save a plot
         Returns:
             plot_info (df) : results corresponding to plotted information:(total instances for each category,
                              total correctly predicted, and accuracy)
@@ -110,24 +113,11 @@ class Generic(object) :
         #run analysis
         return cls._run_analysis_on(submission, 
                                     new_feature, 
-                                    submission.label_column, 
+                                    submission.gold_column, 
                                     plot,
-                                    show_examples)
-        # totals, correct_predictions_n,results= get_plotting_info_from_col(full_df, new_feature, off_col)
-        
-        
-        # plot the bar graph
-        # if plot:
-        #     plot_bar_graph(labels, totals, correct_predictions_n, 
-        #                     title = "Predictions on Text with " + new_feature)
-        # #get examples
-        # if show_examples == True:
-        #     results = get_examples(full_df,new_feature,results,off_col=off_col,sort_list = False)
-        
-        # #get_metrics
-        # metrics = get_metrics(full_df, off_col,new_feature,)
-        
-        # return results, metrics
+                                    show_examples,
+                                    savePlotToFile)
+     
 
 
     @classmethod
@@ -135,6 +125,7 @@ class Generic(object) :
              threshold:float = 0.5,
              plot=True,
              show_examples=False,
+             savePlotToFile= ""
              ):
         """Check how model predicts on instances that are written using African American Vernacular English. The scores 
             are calculated using the TwitterAAE model created by (Blodgett et. al 2016). Further information can be found at
@@ -147,7 +138,7 @@ class Generic(object) :
             plot (boolean): to plot or not to plot
             show_examples (boolean): to show examples of instances the model predicted incorrectly or not
                                     (WARNING: LIKELY CONTAINS OFFENSIVE LANGUAGE)
-            off_col (str): ground truth column name 
+            savePlotToFile (str): File name for saving plot, empty string will not save a plot
         Returns:
             plot_info (df) : results corresponding to plotted information:(total instances for each category,
                              total correctly predicted, and accuracy)
@@ -169,26 +160,12 @@ class Generic(object) :
        
         return cls._run_analysis_on(submission, 
                                     new_feature, 
-                                    submission.label_column, 
+                                    submission.gold_column, 
                                     plot,
-                                    show_examples)
+                                    show_examples,
+                                    savePlotToFile)
         
         
-        # totals,correct_predictions_n, results, full_df= get_plotting_info_create_col(
-        #     data_at,data_bt, new_feature,off_col)
-
-        # # plot the bar graph
-        # if plot:
-        #     plot_bar_graph(labels, totals, correct_predictions_n, 
-        #                     title = "Predictions on Text with " + new_feature)
-        # #get examples
-        # if show_examples == True:
-        #     results = get_examples(full_df,new_feature,results,off_col,sort_list = False)
-        
-        # #get_metrics
-        # metrics = get_metrics(full_df,off_col,new_feature)
-        
-        # return results, metrics
                 
 
     @staticmethod
@@ -197,6 +174,7 @@ class Generic(object) :
                          hist_bins = 10,
                          plot=True,
                          show_examples=False,
+                         savePlotToFile= ""
                          ):
         """Analyze and plot how the model performs on instances of different lengths using a histogram.
 
@@ -207,7 +185,7 @@ class Generic(object) :
             plot (boolean): to plot or not to plot
             show_examples (boolean): to show examples of instances the model predicted incorrectly or not
                                     (WARNING: LIKELY CONTAINS OFFENSIVE LANGUAGE)
-            off_col (str): ground truth column name 
+            savePlotToFile (str): File name for saving plot, empty string will not save a plot
         Returns:
             plot_info (df) : results corresponding to plotted information:(total instances for each category,
                              total correctly predicted, and accuracy)
@@ -224,7 +202,7 @@ class Generic(object) :
             new_feature = "Average Characters per Word"
             submission.submission[new_feature] = [np.average([len(i) for i in row])for row in submission.submission[submission.text_column].str.split()]
        
-        correct_preds = submission.submission[(submission.submission[submission.prediction_column] ==submission.submission[submission.label_column])]
+        correct_preds = submission.submission[(submission.submission[submission.prediction_column] ==submission.submission[submission.gold_column])]
             
         bins, bin_vals, bin_vals_correct = histogram_values(submission.submission[new_feature],
                                                 correct_preds[new_feature])
@@ -246,7 +224,7 @@ class Generic(object) :
                            xlabel = "Text Length",
                            list_of_values =  submission.submission[new_feature],
                            correct_preds = correct_preds[new_feature],
-                           accuracy = percents)
+                           accuracy = percents, savePlotToFile="")
         #reformat bins for clarity
         new_feature_list = []
         for tl in submission.submission[new_feature]:
@@ -270,7 +248,8 @@ class Generic(object) :
     @classmethod
     def check_anno_agreement(cls,submission: DatasetSubmissionObject, 
                              anno_columns: list,
-                             plot = True, show_examples=False) -> pd.DataFrame:
+                             plot = True, show_examples=False,
+                             savePlotToFile= "") -> pd.DataFrame:
         """how model predicts on instances where annotators fully agree in whether text is offensive ("Y","Y","Y") or ("N","N","N).
 #             vs when there is partial agreement. This should indicate performance on "easy" (full) vs "difficult" (partial) cases
 #             Updates cold dataset with new feature column of full vs partial agreement
@@ -282,6 +261,7 @@ class Generic(object) :
             plot (bool, optional): Plot the annotator agreement as a bar plot. Defaults to True.
             show_examples(bool,optional) : to show examples of instances the model predicted incorrectly or not
                                          (WARNING: LIKELY CONTAINS OFFENSIVE LANGUAGE)
+            savePlotToFile (str): File name for saving plot, empty string will not save a plot
 
         Returns:
             plot_info (pd.DataFrame): Returns a dataframe that calculates the full 
@@ -307,9 +287,10 @@ class Generic(object) :
        
         return cls._run_analysis_on(submission, 
                                     new_feature, 
-                                    submission.label_column, 
+                                    submission.gold_column, 
                                     plot,
-                                    show_examples)
+                                    show_examples,
+                                    savePlotToFile)
         
         # totals,correct_predictions_n, results, full_df= get_plotting_info_create_col(
         #     full_agree,partial_agree, new_feature,off_col)

@@ -1,14 +1,13 @@
 from typing import List, Union
 import numpy as np
 
-from olea.data.hatecheck import HateCheckSubmissionObject
 from olea.utils.analysis_tools import get_metrics, get_examples
 from olea.data.dso import DatasetSubmissionObject
 from olea.analysis.generic import Generic
 
 class HateCheckAnalysis(object) : 
 
-    label_column = 'label_gold'
+    gold_column = 'label_gold'
     prediction_column = 'preds'
 
     data_columns = ['functionality', 'case_id' , 'test_case' , 'direction' , 
@@ -23,22 +22,35 @@ class HateCheckAnalysis(object) :
                     'spell_char_swap_h', 'spell_char_del_h', 'spell_space_del_h',
                     'spell_space_add_h', 'spell_leet_h']
 
-    categories = {'derogation (h)' : ['derog_neg_emote_h', 'derog_neg_attrib_h', 'derog_dehum_h', 'derog_impl_h'], 
+    categories = {'derogation' : ['derog_neg_emote_h', 'derog_neg_attrib_h', 'derog_dehum_h', 'derog_impl_h'], 
                 'threats' : ['threat_dir_h', 'threat_norm_h'],
                 'slurs':['slur_h', 'slur_homonym_nh', 'slur_reclaimed_nh'],
                 'profanity' : ['profanity_h', 'profanity_nh'], 
                 'pronoun_references':['ref_subs_clause_h','ref_subs_sent_h'], 
                 'negation':['negate_pos_h', 'negate_neg_nh'], 
-                'phrasing (h)' : ['phrase_question_h','phrase_opinion_h'], 
-                'identity(nh)' : ['ident_neutral_nh', 'ident_pos_nh'],
-                'counter (nh)' : ['counter_quote_nh','counter_ref_nh'],
-                'nonhateful-abuse (nh)' : ['target_obj_nh', 'target_indiv_nh', 'target_group_nh'],
-                'spelling changes (h)' : ['spell_char_swap_h', 'spell_char_del_h', 'spell_space_del_h',
+                'phrasing' : ['phrase_question_h','phrase_opinion_h'], 
+                'identity' : ['ident_neutral_nh', 'ident_pos_nh'],
+                'counter' : ['counter_quote_nh','counter_ref_nh'],
+                'nonhateful-abuse' : ['target_obj_nh', 'target_indiv_nh', 'target_group_nh'],
+                'spelling changes' : ['spell_char_swap_h', 'spell_char_del_h', 'spell_space_del_h',
                                 'spell_space_add_h', 'spell_leet_h']
+                }
+    
+    category_hate_label = {'derogation' : '(h)', 
+                'threats' : '(h)' ,
+                'slurs': "",
+                'profanity' : "", 
+                'pronoun_references': '(h)', 
+                'negation':"", 
+                'phrasing' : '(h)', 
+                'identity' : '(nh)' ,
+                'counter' : '(nh)',
+                'nonhateful-abuse' : '(nh)',
+                'spelling changes' :  '(h)'
                 }
 
     @classmethod
-    def _run_analysis_on_functionality(cls, submission:HateCheckSubmissionObject, on:Union[str,List[str]],show_examples,plot) :
+    def _run_analysis_on_functionality(cls, submission:DatasetSubmissionObject, on:Union[str,List[str]],show_examples,plot,savePlotToFile) :
         """helper function for running analysis on a category, a list of categories, or over all categories. Returns two dataframes. plot_info corresponds to 
             information that is plotted, number of offensive/non offensive instances for each category in "on" as well as
             accuracy of model. Metrics returns the classification report for each category specified on "on"
@@ -49,6 +61,7 @@ class HateCheckAnalysis(object) :
                 class (eg: 'threats'), or list of categories (eg: ['threats','slurs'])
             plot (boolean): to plot results or not
             show_examples (boolean): to return examples or not
+            savePlotToFile (str): File name for saving plot, empty string will not save a plot
 
         Returns:
             plot_info (df) : results corresponding to plotted information:(total instances for each category,
@@ -64,7 +77,7 @@ class HateCheckAnalysis(object) :
                     new_dic.setdefault(x,[]).append(k)
                     
             submission.submission[on] = submission.submission.apply (lambda row: new_dic[row.functionality][0], axis=1)
-            return Generic.analyze_on(submission, on, show_examples, plot)
+            return Generic.analyze_on(submission, on, show_examples, plot,savePlotToFile)
         
         
         # analyze on one of the categories
@@ -91,24 +104,11 @@ class HateCheckAnalysis(object) :
         df1[new_feature] = labels[0]
         df2[new_feature] = labels[1]
         submission.submission = df1.merge(df2,"outer")
-        return Generic.analyze_on (submission, new_feature, show_examples, plot)
+        return Generic.analyze_on (submission, new_feature, show_examples, plot,savePlotToFile)
            
            
-        #elif type(on) == str : 
-           # analysis_set = submission.submission[submission.submission['functionality'] == on]
-        # else : 
-        #     analysis_set = submission.submission[submission.submission['functionality'].isin(on)]
-
-        
-        #create new column
-           
-
-       
-        # return get_metrics(df = analysis_set, 
-        #                    off_col = cls.label_column, 
-        #                    column = None)
     @classmethod
-    def analyze_on(cls, hatecheck_submission:HateCheckSubmissionObject, on:Union[str, List[str]], show_examples = True, plot =True) : 
+    def analyze_on(cls, hatecheck_submission:DatasetSubmissionObject, on:Union[str, List[str]], show_examples = True, plot =True,savePlotToFile = "") : 
         """function for running analysis on a category, a list of categories, or over all categories. Returns two dataframes. plot_info corresponds to 
             information that is plotted, number of offensive/non offensive instances for each category in "on" as well as
             accuracy of model. Metrics returns the classification report for each category specified on "on"
@@ -119,18 +119,14 @@ class HateCheckAnalysis(object) :
                 class (eg: 'threats'), or list of categories (eg: ['threats','slurs'])
             plot (boolean): to plot results or not
             show_examples (boolean): to return examples or not
+            savePlotToFile (str): File name for saving plot, empty string will not save a plot
 
         Returns:
             plot_info (df) : results corresponding to plotted information:(total instances for each category,
                              total correctly predicted, and accuracy)
             metrics (df): classification report for each category
         """
-        return cls._run_analysis_on_functionality(hatecheck_submission, on, show_examples, plot)
-
-    # @classmethod
-    # def analyze_on_all(cls, hatecheck_submission:HateCheckSubmissionObject) :
-    #     return cls._run_analysis_on_functionality(submission=hatecheck_submission.submission, on=cls.functionalities)
-
+        return cls._run_analysis_on_functionality(hatecheck_submission, on, show_examples, plot,savePlotToFile)
 
 if __name__ == '__main__' : 
 
